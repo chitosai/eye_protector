@@ -1,0 +1,37 @@
+{
+  "manifest_version": 2,
+
+  "name": "保护眼睛",
+  "description": "保护眼睛的同时尽量保持原网站的美观",
+  "version": "1.0.0",
+
+  "permissions": [
+    "storage",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "icons":{
+  	"16": "images/icon.png",
+  	"48":"images/icon.png",
+  	"128":"images/icon.png"
+  },
+  "browser_action": {
+      "default_icon": {
+         "19": "images/icon.png",
+         "38": "images/icon.png"
+      },
+      "default_title": "设置设置",
+      "default_popup": "options.html"
+   },
+  "content_scripts":[{
+  	"matches":[
+  		"http://*/*",
+      "https://*/*"
+  	],
+  	"js":[
+      "js/config.js",
+  		"js/main.js"
+  	],
+  	"run_at": "document_idle"
+  }]
+}
