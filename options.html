@@ -1,125 +1,31 @@
-<html xmlns="http://www.w3.org/1999/xhtml" style="height: 200px;"><head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<link rel="stylesheet" href="../../css/popup.css" type="text/css"/>
-		<script src="../../js/jquery.js"></script>
-		<script src="../../js/options.js"></script>
-	</head>
-	<body style="direction: ltr; text-align: left; visibility: visible;height:200px">
-		<div id="menu">
-			<div>
-				<div id="onOff" class="item" style="text-align: center;font-weight: bold;" title="">
-					<span id="onOffText"></span>
-				</div>
-			</div>
-			<div class="separator"></div>
-			<div id="" class="item" title="有些网页的背景不是纯色背景，而是一些图片，通过勾选这个选项就可以把这种背景覆盖掉。">
-				<label>
-					<input id="bgImg" type="checkbox" value=""/>
-					<span>背景图案覆盖</span>
-				</label>
-			</div>
-			
-			<div class="separator"></div>
-			<div id="" class="item" title="">
-				<label>
-					<input id="blackFontColor" type="checkbox" value=""/>
-					<span>字体转换成黑色</span>
-				</label>
-			</div>
-			<div class="separator"></div>
-			<div class="item1 blue" style="cursor: pointer;white-space: nowrap;font-weight:bold;text-align:center" title="这些选项可以让你自己指定哪一些html标签可以变色，或者说，它们可以让你自定义网页中的哪些元素要被变色。">背景变色选项</div>
-			<div id="" class="item" title="勾选此选项可以让很多简单网页的背景变成浅绿色">
-				<label>
-					<input id="body" type="checkbox" value=""/>
-					<span>主体(&lt;body&gt;)</span>
-				</label>
-			</div>
-			<div id="" class="item" title="勾选此选项可以让大部分网页的大部分区域变成浅绿色">
-				<label>
-					<input id="div" type="checkbox" value=""/>
-					<span>区块(&lt;div&gt;)</span>
-				</label>
-			</div>
-			<div id="" class="item" title="勾选此选项，可以让绝大部分的表格变成浅绿色">
-				<label>
-					<input id="table" type="checkbox" value=""/>
-					<span>表格</span>
-				</label>
-			</div>
-			<div id="" class="item" title="">
-				<label>
-					<input id="textInput" type="checkbox" value="test"/>
-					<span>文本输入框</span>
-				</label>
-			</div>
-			<div id="" class="item" title="">
-				<label>
-					<input id="select" type="checkbox" value=""/>
-					<span>下拉框</span>
-				</label>
-			</div>
-			<div id="" class="item" title="">
-				<label>
-					<input id="ul" type="checkbox" value=""/>
-					<span>列表(&lt;ul&gt;)</span>
-				</label>
-			</div>
-
-			<div id="" class="separator"></div>
-			<div id="menuAbout" class="item">
-				<img src="../../images/about16.png"/>&nbsp;
-				<span>关于眼睛护航</span>
-			</div>
-			<div id="" class="separator"></div>
-			<div title="您如果觉得本程序很好地保护了您的眼睛，您可以考虑通过捐赠来支持本人，多少随意。非常感谢您的支持！">
-				<label>
-					<img style="padding-left: 8px" src="../../images/donate-zh_CN.jpg"/>&nbsp;&nbsp;
-					<a href="http://me.alipay.com/spraith" class="blue" target="blank">捐赠作者</a>
-				</label>
-			</div>
+<!doctype html>
+<html lang="cn">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+	<div id="menu">
+		<div class="item" id="replaceBorderStyle">
+			<div class="icon"></div>		
+			<span>边框改为虚线</span>
 		</div>
-
-		<div id="about">
-			<div id="close" class="close"><img src="../../images/close.png"></div>
-			<div class="header">
-				<table>
-					<tbody><tr>
-							<td><img src="../../images/glasses128.png" width="70" style="margin-top:-15px;"></td>
-							<td>
-								<table class="titleTable">
-									<tbody><tr>
-											<td colspan="2">
-												<div class="title">眼睛护航</div>
-											</td>
-										</tr>
-										<tr>
-											<td width="1" class="version">版本</td>
-											<td class="version"><span class="versionNumber"></span></td>
-										</tr>
-									</tbody></table>
-							</td>
-						</tr>
-					</tbody></table>
-			</div>
-			<div class="body">
-				<div id="developer">
-					<div class="name">
-						<table>
-							<tbody><tr>
-									<td>开发人员</td>
-									<td>@Spraith</td>
-								</tr>
-								<tr>
-									<td>建议或bug请邮箱联系:</td>
-									<td>iamzxt999@163.com</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-			<div class="footer">
-				<div>Copyright © 2013 @Spraith. <br> 保留全部权利。</div>
-			</div>
+		<div class="item" id="replaceTextColor">
+			<div class="icon"></div>		
+			<span>文字改为黑色</span>
 		</div>
-</body></html>
+		<div class="item" id="replaceTextInput">
+			<div class="icon"></div>		
+			<span>替换输入框颜色</span>
+		</div>
+		<div class="separator"></div>
+		<div class="item" id="skipThisSite">
+			<div class="icon"></div>		
+			<span>忽略此网站</span>
+		</div>
+	</div>
+	<script src="js/jquery.js"></script>
+	<script src="js/utility.js"></script>
+	<script src="js/popup.js"></script>
+</body>
+</html>

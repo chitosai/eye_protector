@@ -51,15 +51,15 @@ var calcBrightness = function(dom, attr) {
  */
 var replaceBackgroundColor = function(dom) {
 	// 是否需要替换背景色
-	if( !config.replaceTextInput && dom.type == 'text' ) return 0;
+	if( !option.replaceTextInput && dom.type == 'text' ) return 0;
 
 	// 根据亮度判断是否需要替换
 	var brightness = calcBrightness(dom, 'backgroundColor');
 	if( !brightness ) return 1;
 
-	if ( brightness > config.bgColorBrightnessThreshold ) {
+	if ( brightness > option.bgColorBrightnessThreshold ) {
 		dom.style.webkitTransition = 'background .3s ease';
-		dom.style.backgroundColor = config.replaceBgColor;
+		dom.style.backgroundColor = option.replaceBgWithColor;
 		// dom.style.backgroundColor = 'rgba(0, 0, 0, .1)';
 		return 3;
 	} else {
@@ -91,11 +91,11 @@ var replaceBorderColor = function(dom) {
 		borderBrightness = calcBrightness(dom, borderColorAttr);
 		if( !borderBrightness ) continue;
 
-		if( borderBrightness > config.borderColorBrightnessThreshold ) {
-			dom.style[borderColorAttr] = config.replaceBorderColor;
+		if( borderBrightness > option.borderColorBrightnessThreshold ) {
+			dom.style[borderColorAttr] = option.replaceBorderWithColor;
 
 			// 是否替换边框样式
-			if( config.replaceBorderStyle && parseInt(borderWidth) == 1 ) {
+			if( option.replaceBorderStyle && parseInt(borderWidth) == 1 ) {
 				dom.style[ 'border' + prefix + 'Style'] = 'dashed';
 			}
 		}
@@ -107,7 +107,7 @@ var replaceBorderColor = function(dom) {
  *
  */
 var replaceTextColor = function(dom) {
-	if( !config.replaceTextColor ) return false;
+	if( !option.replaceTextColor ) return false;
 
 	// 文字亮度
 	var brightness = calcBrightness(dom, 'color'), color;
@@ -115,7 +115,7 @@ var replaceTextColor = function(dom) {
 
 	// 确认此元素亮度过高且自身没有背景图片
 	var bgImage = getStyle(dom, 'backgroundImage');
-	if( brightness > config.borderColorBrightnessThreshold &&
+	if( brightness > option.borderColorBrightnessThreshold &&
 		( !bgImage || bgImage == '') ) {
 		// 替换文字颜色
 		dom.style.color = '#000';
@@ -156,12 +156,46 @@ var replaceColor = function(dom, processOther) {
 }
 
 function protectEye() {
-	// 替换body
-	document.body.style.backgroundColor = config.replaceColor;
 	// 遍历DOM替换成目标色
 	replaceColor(document.body);
+	// 替换body
+	document.body.style.backgroundColor = option.replaceColor;
+}
+
+function stopProtect() {
+
+}
+
+function start() {
+	protectEye();
+	timer = setInterval(protectEye, 1000);
+}
+
+function pause() {
+	clearInterval(timer);
+}
+
+function check() {
+	readOption(function() {
+		if( option['skip-' + currentHost] ) {
+			pause();
+		} else {
+			start();
+		}
+	});
+}
+
+var currentHost = '', timer;
+
+function init() {
+	// 保存域名
+	currentHost = document.location.host.split('.').join('-dot-');
+
+	check();
+
+	// 设置改变时重新读取设置
+	chrome.storage.onChanged.addListener(check);
 }
 
 // GO
-protectEye();
-setInterval(protectEye, 1000);
+init();
