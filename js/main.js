@@ -221,7 +221,7 @@ function protectEye() {
 	// 遍历DOM替换成目标色
 	replaceColor(document.body);
 	// 替换body
-	document.body.style.backgroundColor = option.replaceColor;
+	document.body.style.backgroundColor = option.replaceBgWithColor;
 }
 
 function start() {
