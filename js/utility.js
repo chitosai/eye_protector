@@ -14,6 +14,9 @@ var option = {
     replaceTextColor : true,
     // 是否替换文本输入框背景色
     replaceTextInput : false,
+
+    // 忽略的特殊class
+    ignoreClass : ['highlight', 'syntax', 'code'],
 }
 
 // 检查对象是否为空
@@ -41,7 +44,7 @@ var storage = chrome.storage.sync;
 function readOption(callback) {
     storage.get('option', function(obj){
         if( !is_object_empty(obj) ) {
-            option = obj['option'];
+            option = $.extend(option, obj['option']);
         }
         if( callback && typeof callback == 'function' ) callback();
     });

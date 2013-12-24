@@ -63,6 +63,24 @@ var calcBrightness = function(dom, attr) {
 	return brightness;
 }
 
+/**
+ * 根据预设的class列表跳过特定div，直接用IndexOf是因为这样highlight/highlight/highlighter之类的不用重复了
+ * @return true dom中包含需要跳过的class
+ * @return false 不包含
+ * 
+ */
+var hasIgnoreClass = function(dom) {
+	var classList = dom.className,
+		ignoreClassList = option.ignoreClass;
+
+	for(var i in ignoreClassList) {
+		if( classList.indexOf(ignoreClassList[i]) > -1 ) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /*
  * 替换颜色
  * @return 3 设置了背景色，且背景色亮度超过阈值，替换了背景色
@@ -73,6 +91,8 @@ var calcBrightness = function(dom, attr) {
 var replaceBackgroundColor = function(dom) {
 	// 是否需要替换背景色
 	if( !option.replaceTextInput && dom.type == 'text' ) return 0;
+	// 规避hightlighted/code等代码区块
+	if( hasIgnoreClass(dom) ) return 0;
 
 	// 根据亮度判断是否需要替换
 	var brightness = calcBrightness(dom, 'background-color');
