@@ -62,6 +62,12 @@ hr {
 #menu .templateItem {
     display: none;
 }
+#menu .hint{
+    color: #aaa;
+    display: none;
+    text-align: center;
+    line-height: 2;
+}
 
 #menu .item {
     padding: 4px 25px;

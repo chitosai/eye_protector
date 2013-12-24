@@ -5,6 +5,27 @@
 var getStyle = function(dom, attr) {
 	return window.getComputedStyle(dom, null)[attr];
 }
+var setStyle = function(dom, attr, value) {
+	// 获取原始样式
+	var originalStyle = getStyle(dom, attr),
+		styleObjectEncoded = dom.getAttribute('eye-protector-original-style'),
+		styleObject;
+
+	// 带上class注明这个dom是被修改过样式的
+	if( !styleObjectEncoded ) {
+		styleObject = {};
+		dom.classList.add('eye-protector-processed');
+	} else {
+		styleObject = JSON.parse(styleObjectEncoded);
+	}
+
+	// 新增样式
+	styleObject[attr] = originalStyle;
+	// 写回去
+	dom.setAttribute('eye-protector-original-style', JSON.stringify(styleObject));
+
+	dom.style[attr] = value;
+}
 
 /**
  * 获取rgba数组
@@ -54,12 +75,12 @@ var replaceBackgroundColor = function(dom) {
 	if( !option.replaceTextInput && dom.type == 'text' ) return 0;
 
 	// 根据亮度判断是否需要替换
-	var brightness = calcBrightness(dom, 'backgroundColor');
+	var brightness = calcBrightness(dom, 'background-color');
 	if( !brightness ) return 1;
 
 	if ( brightness > option.bgColorBrightnessThreshold ) {
 		dom.style.webkitTransition = 'background .3s ease';
-		dom.style.backgroundColor = option.replaceBgWithColor;
+		setStyle(dom, 'background-color', option.replaceBgWithColor);
 		// dom.style.backgroundColor = 'rgba(0, 0, 0, .1)';
 		return 3;
 	} else {
@@ -73,10 +94,10 @@ var replaceBackgroundColor = function(dom) {
  */
 var replaceBorderColor = function(dom) {
 	// 四边各自计算
-	var prefixs = ['Top', 'Bottom', 'Left', 'Right'];
+	var prefixs = ['top', 'bottom', 'left', 'right'];
 
-	var _borderWidthAttr = 'border%sWidth', borderWidthAttr,
-		_borderColorAttr = 'border%sColor', borderColorAttr, 
+	var _borderWidthAttr = 'border-%s-width', borderWidthAttr,
+		_borderColorAttr = 'border-%s-color', borderColorAttr, 
 		borderWidth, borderBrightness, prefix;
 
 	for( i in prefixs ) {
@@ -92,11 +113,11 @@ var replaceBorderColor = function(dom) {
 		if( !borderBrightness ) continue;
 
 		if( borderBrightness > option.borderColorBrightnessThreshold ) {
-			dom.style[borderColorAttr] = option.replaceBorderWithColor;
+			setStyle(dom, borderColorAttr, option.replaceBorderWithColor);
 
 			// 是否替换边框样式
 			if( option.replaceBorderStyle && parseInt(borderWidth) == 1 ) {
-				dom.style[ 'border' + prefix + 'Style'] = 'dashed';
+				setStyle(dom, 'border-' + prefix + '-style', 'dashed');
 			}
 		}
 	}
@@ -114,11 +135,11 @@ var replaceTextColor = function(dom) {
 	if( !brightness ) return false;
 
 	// 确认此元素亮度过高且自身没有背景图片
-	var bgImage = getStyle(dom, 'backgroundImage');
+	var bgImage = getStyle(dom, 'background-image');
 	if( brightness > option.borderColorBrightnessThreshold &&
 		( !bgImage || bgImage == '') ) {
 		// 替换文字颜色
-		dom.style.color = '#000';
+		setStyle(dom, 'color', '#000');
 	}
 }
 
@@ -155,15 +176,32 @@ var replaceColor = function(dom, processOther) {
 	}
 }
 
+/**
+ * 回复页面原始样式
+ * 
+ */
+function restoreColor() {
+	var nodes = document.querySelectorAll('.eye-protector-processed'),
+		len = nodes.length,
+		i, j, node, originStyleEncoded, originalStyle;
+
+	for( i = 0; i < len; i++ ) {
+		node = nodes[i];
+		originStyleEncoded = node.getAttribute('eye-protector-original-style');
+		if( !originStyleEncoded ) continue;
+
+		originalStyle = JSON.parse(originStyleEncoded);
+		for( j in originalStyle ) {
+			node.style[j] = originalStyle[j];
+		}
+	}
+}
+
 function protectEye() {
 	// 遍历DOM替换成目标色
 	replaceColor(document.body);
 	// 替换body
 	document.body.style.backgroundColor = option.replaceColor;
-}
-
-function stopProtect() {
-
 }
 
 function start() {
@@ -173,6 +211,7 @@ function start() {
 
 function pause() {
 	clearInterval(timer);
+	restoreColor();
 }
 
 function check() {

@@ -21,7 +21,7 @@ function onclick() {
 
 function init() {
     // 获取当前激活tab的域名
-    chrome.tabs.query({'active': true}, function(tabs){
+    chrome.tabs.query({'active': true, 'currentWindow': true}, function(tabs){
         var url = tabs[0].url,
             host = getHost(url);
 
@@ -37,12 +37,17 @@ function init() {
                 if( option[i] == true ) {
                     item.addClass('checked');
                 }
-                item.data(i, option[i]);
+                item.data('value', option[i]);
             }
         }
     });
 
     $('#menu').on('click', '.item', onclick);
+
+    // 全局设置刷新页面后生效
+    $('#menu').on('click', '.global', function(){
+        $('#menu .hint').show();
+    })
 }
 
 init();
