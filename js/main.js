@@ -136,7 +136,7 @@ var replaceBorderColor = function(dom) {
 			setStyle(dom, borderColorAttr, option.replaceBorderWithColor);
 
 			// 是否替换边框样式
-			if( option.replaceBorderStyle && parseInt(borderWidth) == 1 ) {
+			if( option.replaceBorderStyle && Math.round(parseFloat(borderWidth)) == 1 ) {
 				setStyle(dom, 'border-' + prefix + '-style', 'dashed');
 			}
 		}
