@@ -158,7 +158,7 @@ var replaceTextColor = function(dom) {
 	// 确认此元素亮度过高且自身没有背景图片
 	var bgImage = getStyle(dom, 'background-image');
 	if( brightness > option.borderColorBrightnessThreshold &&
-		( !bgImage || bgImage == '') ) {
+		( !bgImage || bgImage == 'none') ) {
 		// 替换文字颜色
 		setStyle(dom, 'color', '#000');
 	}
