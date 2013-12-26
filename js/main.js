@@ -20,7 +20,8 @@ var setStyle = function(dom, attr, value) {
 	}
 
 	// 新增样式
-	styleObject[attr] = originalStyle;
+	if( !styleObject[attr] ) styleObject[attr] = originalStyle;
+
 	// 写回去
 	dom.setAttribute('eye-protector-original-style', JSON.stringify(styleObject));
 
@@ -218,10 +219,10 @@ function restoreColor() {
 }
 
 function protectEye() {
+	// 替换body
+	setStyle(document.body, 'background-color', option.replaceBgWithColor);
 	// 遍历DOM替换成目标色
 	replaceColor(document.body);
-	// 替换body
-	document.body.style.backgroundColor = option.replaceBgWithColor;
 }
 
 function start() {
@@ -250,6 +251,7 @@ function init() {
 	// 保存域名
 	currentHost = document.location.host.split('.').join('-dot-');
 
+	// GO
 	check();
 
 	// 设置改变时重新读取设置
