@@ -33,11 +33,16 @@ var setStyle = function(dom, attr, value) {
  *
  */
 var parseRGBA = function(str) {
-	var rgba = str.match(/\d+/g),
+	var rgba = str.match(/[\d\.]+/g),
 		r = parseInt(rgba[0]),
 		g = parseInt(rgba[1]),
-		b = parseInt(rgba[1]),
-		a = parseInt(rgba[1]);
+		b = parseInt(rgba[2]);
+		
+		if( rgba.length == 4 )
+			a = parseFloat(rgba[3]);
+		else
+			a = 1;
+
 	return [r, g, b, a];
 }
 
@@ -229,11 +234,11 @@ function protectEye() {
 
 function start() {
 	protectEye();
-	timer = setInterval(protectEye, 1000);
+	// timer = setInterval(protectEye, 1000);
 }
 
 function pause() {
-	clearInterval(timer);
+	// clearInterval(timer);
 	restoreColor();
 }
 
