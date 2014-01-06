@@ -220,7 +220,9 @@ function restoreColor() {
 
 function protectEye() {
 	// 替换body
-	setStyle(document.body, 'background-color', option.replaceBgWithColor);
+	if( calcBrightness(document.body) > option.bgColorBrightnessThreshold ) {
+		setStyle(document.body, 'background-color', option.replaceBgWithColor);
+	}
 	// 遍历DOM替换成目标色
 	replaceColor(document.body);
 }
