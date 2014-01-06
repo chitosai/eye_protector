@@ -249,7 +249,7 @@ var currentHost = '', timer;
 
 function init() {
 	// 保存域名
-	currentHost = document.location.host.split('.').join('-dot-');
+	currentHost = getHost(document.location.href);
 
 	// GO
 	check();

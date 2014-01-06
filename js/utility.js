@@ -61,5 +61,5 @@ function getHost(url) {
     if( host.length < 2 ) return false;
 
     // 去掉.
-    return host.split('.').join('-dot-');
+    return host.split('.').join('-dot-').split(':').join('-colon-');
 }
