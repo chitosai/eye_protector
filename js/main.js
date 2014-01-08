@@ -225,7 +225,8 @@ function restoreColor() {
 
 function protectEye() {
 	// 替换body
-	if( calcBrightness(document.body) > option.bgColorBrightnessThreshold ) {
+	var bodyBgBrightness = calcBrightness(document.body);
+	if( !bodyBgBrightness || bodyBgBrightness > option.bgColorBrightnessThreshold ) {
 		setStyle(document.body, 'background-color', option.replaceBgWithColor);
 	}
 	// 遍历DOM替换成目标色
@@ -234,11 +235,11 @@ function protectEye() {
 
 function start() {
 	protectEye();
-	// timer = setInterval(protectEye, 1000);
+	timer = setInterval(protectEye, 1000);
 }
 
 function pause() {
-	// clearInterval(timer);
+	clearInterval(timer);
 	restoreColor();
 }
 
