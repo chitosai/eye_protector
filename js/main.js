@@ -102,7 +102,7 @@ var replaceBackgroundColor = function(dom) {
 
 	// 根据亮度判断是否需要替换
 	var brightness = calcBrightness(dom, 'background-color');
-	if( !brightness ) return 1;
+	if( brightness === false ) return 1;
 
 	if ( brightness > option.bgColorBrightnessThreshold ) {
 		dom.style.webkitTransition = 'background .3s ease';
