@@ -17,6 +17,11 @@ var option = {
 
     // 忽略的特殊class
     ignoreClass : ['highlight', 'syntax', 'code'],
+
+    // 忽略的网站列表
+    ignoreDomainList : [],
+    // 强制替换的页面列表
+    loopDomainList : [],
 }
 
 // 检查对象是否为空
@@ -37,6 +42,17 @@ if (!String.prototype.startsWith) {
       return this.indexOf(searchString, position) === position;
     }
   });
+}
+
+// array.remove
+if( !Array.prototype.remove ) {
+    Object.defineProperty(Array.prototype, 'remove', {
+        value : function(key) {
+            var index = this.indexOf(key);
+            if( index > -1 ) this.splice(index, 1);
+            return this;
+        }
+    });
 }
 
 var storage = chrome.storage.sync;

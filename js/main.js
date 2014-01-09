@@ -235,17 +235,22 @@ function protectEye() {
 
 function start() {
 	protectEye();
-	timer = setInterval(protectEye, 1000);
+
+	if( option['loopDomainList'].indexOf(currentHost) > -1 ) {
+		timer = setInterval(protectEye, 1000);
+	} else {
+		timer = clearInterval(timer);
+	}
 }
 
 function pause() {
-	clearInterval(timer);
+	timer = clearInterval(timer);
 	restoreColor();
 }
 
 function check() {
 	readOption(function() {
-		if( option['skip-' + currentHost] ) {
+		if( option['ignoreDomainList'].indexOf(currentHost) > -1 ) {
 			pause();
 		} else {
 			start();
