@@ -96,7 +96,7 @@ var hasIgnoreClass = function(dom) {
  */
 var replaceBackgroundColor = function(dom) {
 	// 是否需要替换背景色
-	if( !option.replaceTextInput && dom.type == 'text' ) return 0;
+	if( !option.replaceTextInput && dom.nodeName == 'INPUT' ) return 0;
 	// 规避hightlighted/code等代码区块
 	if( hasIgnoreClass(dom) ) return 0;
 
