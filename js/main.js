@@ -8,7 +8,7 @@ var getStyle = function(dom, attr) {
 var setStyle = function(dom, attr, value) {
 	// 获取原始样式
 	var originalStyle = getStyle(dom, attr),
-		styleObjectEncoded = dom.getAttribute('eye-protector-original-style'),
+		styleObjectEncoded = $(dom).data('eye-protector-original-style'),
 		styleObject;
 
 	// 带上class注明这个dom是被修改过样式的
@@ -16,14 +16,13 @@ var setStyle = function(dom, attr, value) {
 		styleObject = {};
 		dom.classList.add('eye-protector-processed');
 	} else {
-		styleObject = JSON.parse(styleObjectEncoded);
+		styleObject = styleObjectEncoded;
 	}
 
 	// 新增样式
 	if( !styleObject[attr] ) styleObject[attr] = originalStyle;
-
 	// 写回去
-	dom.setAttribute('eye-protector-original-style', JSON.stringify(styleObject));
+	$(dom).data('eye-protector-original-style', styleObject);
 
 	dom.style[attr] = value;
 }
@@ -213,10 +212,9 @@ function restoreColor() {
 
 	for( i = 0; i < len; i++ ) {
 		node = nodes[i];
-		originStyleEncoded = node.getAttribute('eye-protector-original-style');
-		if( !originStyleEncoded ) continue;
+		originalStyle = $(node).data('eye-protector-original-style');
+		if( !originalStyle ) continue;
 
-		originalStyle = JSON.parse(originStyleEncoded);
 		for( j in originalStyle ) {
 			node.style[j] = originalStyle[j];
 		}
