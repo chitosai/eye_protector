@@ -60,10 +60,8 @@ var calcBrightness = function(dom, attr) {
 	// alpha通道为0是transparent
 	if( !rgba[3] ) return false;
 
-	// by henix
-	// http://userscripts.org/scripts/show/138275
-	var brightness = (Math.max(rgba[0], rgba[1], rgba[2]) 
-						+ Math.min(rgba[0], rgba[1], rgba[2])) / 255 / 2;
+	// 把RGB转换为亮度
+	var brightness = .2126 * rgba[0] / 255 + .7152 * rgba[1] / 255 + .072 * rgba[2] / 255;
 
 	return brightness;
 }
