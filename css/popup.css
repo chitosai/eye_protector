@@ -1,7 +1,11 @@
 body{
-    font: 14px PingFangSC-Light, Microsoft YaHei;
+    font: 14px "PingFangSC-Light", "Segoe UI", "Microsoft YaHei";
     margin: .6rem .3rem;
     width: 150px;
+}
+#option-page{
+    width: 300px;
+    margin: 1rem auto;
 }
 .option-title{
     font-weight: bold;
@@ -12,14 +16,16 @@ body{
     margin-bottom: .6rem;
 }
 .option-item{
+    border-radius: 3px;
     cursor: pointer;
+    text-indent: 20px;
     line-height: 2em;
     padding: 0 .3rem;
 }
 .option-item:hover{
-    background: #f0f0f0;
+    background: #eee;
 }
 .option-item.checked{
-    background: #6976af;
-    color: #fff;
+    background: url('../images/check.png') 0 8px no-repeat;
+    color: #41ad49;
 }

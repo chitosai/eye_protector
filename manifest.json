@@ -24,6 +24,7 @@
       "default_title": "设置设置",
       "default_popup": "popup.html"
    },
+  "options_page": "options.html",
   "content_scripts":[{
   	"matches":[
   		"http://*/*",
