@@ -3,7 +3,7 @@
 
   "name": "保护眼睛",
   "description": "阿姆斯特朗回旋喷气式阿姆斯特朗墨镜",
-  "version": "1.0.2",
+  "version": "2.0.0",
 
   "permissions": [
     "tabs",
