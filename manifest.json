@@ -22,7 +22,7 @@
          "38": "images/icon.png"
       },
       "default_title": "设置设置",
-      "default_popup": "options.html"
+      "default_popup": "popup.html"
    },
   "content_scripts":[{
   	"matches":[
