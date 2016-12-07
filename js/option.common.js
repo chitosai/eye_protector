@@ -13,7 +13,7 @@ function onclick() {
 }
 
 function init() {
-    var nodes = $$('.option-item');
+    var nodes = $$('.option-check');
     nodes.forEach(function(node) {
         node.addEventListener('click', onclick);
     });
