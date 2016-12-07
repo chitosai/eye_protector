@@ -43,11 +43,10 @@ Array.prototype.remove = function(key) {
 
 // shortcut
 function $(id) {
-    return document.getElementById(id);
+  return document.getElementById(id);
 }
-
 function $$(selector) {
-    return document.querySelectorAll(selector);
+  return document.querySelectorAll(selector);
 }
 
 var storage = chrome.storage.sync;

@@ -20,7 +20,7 @@ function onclick() {
 
 function init() {
     // 获取当前激活tab的域名
-    chrome.tabs.query({'active': true, 'currentWindow': true}, function(tabs){
+    chrome.tabs.query({'active': true, 'currentWindow': true}, function(tabs) {
         url = tabs[0].url, host = getHost(url);
         if( !host ) {
             alert('无法获取当前页面的域名');
@@ -29,18 +29,18 @@ function init() {
 
     // 读取设置
     readOption(function() {
-        var key, item;
+        var key, value, node;
         for(key in option) {
+            value = option[key];
             // object类的设置是域名列表，检查当前域名是否在列表中
-            if( typeof option[key] == 'object' ) {
-                item = option[key];
-                if( item.indexOf(host) > -1 ) {
+            if( typeof value == 'object' ) {
+                if( value.indexOf(host) > -1 ) {
                     $(key).classList.add('checked');
                 }
             } else {
-            // bool
+                // bool
                 item = $(key);
-                if( item && option[key] ) {
+                if( item && value ) {
                     item.classList.add('checked');
                 }
             }
