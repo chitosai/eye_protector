@@ -66,10 +66,15 @@ function saveOption() {
 
 // 获取当前激活标签页域名
 function getHost(url) {
-  var host = /https?:\/\/([^/]+)\//.exec(url)[1];
-  if( host.length < 2 ) {
-    return false;
+  var host = /https?:\/\/([^/]+)\//.exec(url);
+  if( host && host.length > 1 ) {
+    host = host[1];
+    if( host.startsWith('www.') ) {
+      return host.slice(4);
+    } else {
+      return host;
+    }
   } else {
-    return host;
+    return false;
   }
 }
