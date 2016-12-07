@@ -5,31 +5,19 @@
 	<link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
-	<div id="menu">
-		<div class="hint">全局设置刷新页面后生效</div>
-		<div class="item global" id="replaceBorderStyle">
-			<div class="icon"></div>		
-			<span>边框改为虚线</span>
-		</div>
-		<div class="item global" id="replaceTextColor">
-			<div class="icon"></div>		
-			<span>文字改为黑色</span>
-		</div>
-		<div class="item global" id="replaceTextInput">
-			<div class="icon"></div>		
-			<span>替换输入框颜色</span>
-		</div>
-		<div class="separator"></div>
-		<div class="item unique" id="loopDomainList" title="如果页面会ajax刷新请勾选">
-			<div class="icon"></div>
-			<span>强制替换此网站</span>
-		</div>
-		<div class="item unique" id="ignoreDomainList">
-			<div class="icon"></div>		
-			<span>忽略此网站</span>
-		</div>
+	<div class="option-title">全局设置</div>
+	<div class="option-list">
+		<div class="option-item" type="global" id="replaceBorderStyle">边框替换为虚线</div>
+		<div class="option-item" type="global" id="replaceTextColor">文字替换为黑色</div>
+		<div class="option-item" type="global" id="replaceTextInput">替换输入框颜色</div>
 	</div>
-	<script src="js/jquery.js"></script>
+	<!-- end -->
+	<div class="option-title">当前域名</div>
+	<div class="option-list">
+		<div class="option-item" type="unique" id="loopDomainList">强制替换此网站</div>
+		<div class="option-item" type="unique" id="ignoreDomainList">忽略此网站</div>
+	</div>
+	<!-- end -->
 	<script src="js/utility.js"></script>
 	<script src="js/popup.js"></script>
 </body>
