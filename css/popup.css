@@ -7,6 +7,9 @@ body{
     width: 300px;
     margin: 1rem auto;
 }
+#option-page .option-list{
+    margin-bottom: 1.6rem;
+}
 .option-title{
     font-weight: bold;
     font-size: 1.5rem;
@@ -18,9 +21,8 @@ body{
 .option-item{
     border-radius: 3px;
     cursor: pointer;
-    text-indent: 20px;
     line-height: 2em;
-    padding: 0 .3rem;
+    padding: 0 25px;
 }
 .option-item:hover{
     background: #eee;
@@ -28,4 +30,14 @@ body{
 .option-item.checked{
     background: url('../images/check.png') 0 8px no-repeat;
     color: #41ad49;
+    cursor: default;
+}
+.option-desc{
+    color: #aaa;
+    line-height: 1.625em;
+    margin: 0;
+    padding-bottom: .3rem;
+}
+.option-desc b{
+    color: #777;
 }
