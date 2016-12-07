@@ -13,7 +13,17 @@ var CLICKLISTENERS = {
 	    this.classList.toggle('checked');
 	},
 	radio: function() {
-		
+		var key = this.getAttribute('name'),
+			val = this.id,
+			nodes = $$('.option-item[name=' + key + ']');
+
+		nodes.forEach(function(node) {
+			node.classList.remove('checked');
+		});
+		this.classList.add('checked');
+
+		OPTIONS.basic[key] = this.id;
+		saveOption();
 	}
 }
 
