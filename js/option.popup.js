@@ -1,3 +1,21 @@
+var url, host;
+
+function onClick() {
+    var key = this.id;
+
+    // 根据选项类型反转选项
+    var list = OPTIONS[key];
+    if( list.indexOf(host) > -1 ) {
+        list.remove(host);
+    } else {
+    	list.push(host);
+    }
+    saveOption();
+
+    // toggle class
+    this.classList.toggle('checked');
+}
+
 function init() {
     // 获取当前激活tab的域名
     chrome.tabs.query({'active': true, 'currentWindow': true}, function(tabs) {
@@ -13,7 +31,7 @@ function init() {
         	// 是否在主动模式/被动模式的特例名单里
         	var mode = OPTIONS.basic.mode,
         		list = OPTIONS[mode+'List'],
-        		btn = $(mode+'Exclude');
+        		btn = $(mode+'List');
 
         	if( list.indexOf(host) > -1 ) {
         		btn.classList.add('checked');
@@ -24,9 +42,15 @@ function init() {
 
         	// 是否强制替换
         	if( OPTIONS.forceReplaceList.indexOf(host) > -1 ) {
-        		$('forceReplace').classList.add('checked');
+        		$('forceReplaceList').classList.add('checked');
         	}
         })
+    });
+
+    // 修改设置
+    var nodes = $$('.option-check');
+    nodes.forEach(function(node) {
+        node.addEventListener('click', onClick);
     });
 }
 
