@@ -5,20 +5,14 @@
 	<link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
-	<div class="option-title">全局设置</div>
-	<div class="option-list">
-		<div class="option-item" id="replaceBorderStyle">边框替换为虚线</div>
-		<div class="option-item" id="replaceTextColor">文字替换为黑色</div>
-		<div class="option-item" id="replaceTextInput">替换输入框颜色</div>
-	</div>
-	<!-- end -->
-	<div class="option-title">当前域名</div>
+	<div id="domain" class="option-title"></div>
 	<div class="option-list">
 		<div class="option-item" id="loopDomainList">强制替换此网站</div>
 		<div class="option-item" id="ignoreDomainList">忽略此网站</div>
 	</div>
 	<!-- end -->
 	<script src="js/utility.js"></script>
-	<script src="js/popup.js"></script>
+	<script src="js/option.common.js"></script>
+	<script src="js/option.popup.js"></script>
 </body>
 </html>

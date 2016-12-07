@@ -19,14 +19,6 @@ function onclick() {
 }
 
 function init() {
-    // 获取当前激活tab的域名
-    chrome.tabs.query({'active': true, 'currentWindow': true}, function(tabs) {
-        url = tabs[0].url, host = getHost(url);
-        if( !host ) {
-            alert('无法获取当前页面的域名');
-        }
-    });
-
     // 读取设置
     readOption(function() {
         var key, value, node;
@@ -53,5 +45,4 @@ function init() {
     });
 }
 
-init();
-// chrome.storage.sync.clear();
+document.addEventListener('DOMContentLoaded', init);
