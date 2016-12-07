@@ -48,7 +48,7 @@ function init() {
     });
 
     // 修改设置
-    var nodes = $$('.option-check');
+    var nodes = $$('.option-item');
     nodes.forEach(function(node) {
         node.addEventListener('click', onClick);
     });
