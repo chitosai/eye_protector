@@ -31,7 +31,6 @@
       "https://*/*"
   	],
   	"js":[
-      "js/jquery.js",
       "js/utility.js",
   		"js/main.js"
   	],
