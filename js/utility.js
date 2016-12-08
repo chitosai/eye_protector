@@ -12,8 +12,6 @@ var OPTIONS = {
     replaceBorderWithColor: 'rgba(0, 0, 0, .35)',
     // 替换边框色的亮度阈值
     borderColorBrightnessThreshold: .5,
-    // 是否替换边框样式
-    replaceBorderStyle: false,
     // 是否替换文字颜色
     replaceTextColor: true,
     // 是否替换文本输入框背景色

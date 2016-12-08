@@ -129,11 +129,6 @@ Element.prototype.replaceBorderColor = function() {
 
     if( borderBrightness > OPTIONS.basic.borderColorBrightnessThreshold ) {
       this.setStyle(borderColorAttr, OPTIONS.basic.replaceBorderWithColor);
-
-      // 是否替换边框样式
-      if( OPTIONS.basic.replaceBorderStyle && Math.round(Number(borderWidth)) == 1 ) {
-        this.setStyle('border-' + side + '-style', 'dashed');
-      }
     }
   }
 }
