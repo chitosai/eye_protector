@@ -1,14 +1,9 @@
 var url, host;
 
 function onClick() {
-  var key = this.id;
-
-  if( key == 'on' ) {
-    key = OPTIONS.basic.mode + 'List';
-  }
-
-  // 根据选项类型反转选项
-  var list = OPTIONS[key];
+  var key = OPTIONS.basic.mode + 'List',
+      list = OPTIONS[key];
+      
   if( list.indexOf(host) > -1 ) {
     list.remove(host);
   } else {
@@ -48,10 +43,7 @@ function init() {
   });
 
   // 修改设置
-  var nodes = $$('.item');
-  nodes.forEach(function(node) {
-    node.addEventListener('click', onClick);
-  });
+  $('on').addEventListener('click', onClick);
 }
 
 init();
