@@ -64,7 +64,13 @@ Element.prototype.hasIgnoreClass = function() {
   var ignoreClassList = OPTIONS.ignoreClass, cls;
 
   for(cls of ignoreClassList) {
-    if( this.className.indexOf(cls) > -1 ) {
+    try{
+      if( this.className.indexOf(cls) > -1 ) {
+        return true;
+      }
+    } catch(e) {
+      // 当前元素没有className可能是遇到svg了，姑且不替换吧
+      // 栗子：google
       return true;
     }
   }
