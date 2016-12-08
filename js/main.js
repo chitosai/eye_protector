@@ -1,30 +1,31 @@
+var STYLES = new Map();
+
 /**
  * 获取元素样式
  *
  */
-var getStyle = function(dom, attr) {
-  return window.getComputedStyle(dom, null)[attr];
+Element.prototype.getStyle = function(key) {
+  return window.getComputedStyle(this, null)[key];
 }
-var setStyle = function(dom, attr, value) {
+// 设置元素样式，同时缓存它原有的样式
+Element.prototype.setStyle = function(key, val) {
   // 获取原始样式
-  var originalStyle = getStyle(dom, attr),
-	    styleObjectEncoded = $(dom).data('eye-protector-original-style'),
-	    styleObject;
+  var originStyle = this.getStyle(key),
+	    styleCache = STYLES.get(this);
 
   // 带上class注明这个dom是被修改过样式的
-  if( !styleObjectEncoded ) {
-    styleObject = {};
-    dom.classList.add('eye-protector-processed');
-  } else {
-    styleObject = styleObjectEncoded;
+  if( !styleCache ) {
+    styleCache = {};
+    this.classList.add('eye-protector-processed');
   }
 
   // 新增样式
-  if( !styleObject[attr] ) styleObject[attr] = originalStyle;
-  // 写回去
-  $(dom).data('eye-protector-original-style', styleObject);
+  if( !styleCache[key] ) {
+    styleCache[key] = originStyle;
+    STYLES.set(this, styleCache);
+  }
 
-  dom.style[attr] = value;
+  this.style[key] = val;
 }
 
 /**
@@ -32,38 +33,25 @@ var setStyle = function(dom, attr, value) {
  *
  */
 var parseRGBA = function(str) {
-  var rgba = str.match(/[\d\.]+/g),
-			r = parseInt(rgba[0]),
-			g = parseInt(rgba[1]),
-			b = parseInt(rgba[2]);
-
-  if( rgba.length == 4 )
-    a = parseFloat(rgba[3]);
-  else
-    a = 1;
-
-  return [r, g, b, a];
+  var rgba = str.match(/[\d\.]+/g);
+  return [Number(rgba[0]), Number(rgba[1]), Number(rgba[2]), rgba.length == 4 ? Number(rgba[3]) : 1];
 }
 
 /**
  * 计算亮度
-
  *
  */
-var calcBrightness = function(dom, attr) {
+Element.prototype.calcBrightness = function(key) {
   // 读取颜色数据
-  var bgcolor = getStyle(dom, attr);
+  var bgcolor = this.getStyle(key);
   if( !bgcolor ) return false;
 
   var rgba = parseRGBA(bgcolor);
-
   // alpha通道为0是transparent
   if( !rgba[3] ) return false;
 
   // 把RGB转换为亮度
-  var brightness = .2126 * rgba[0] / 255 + .7152 * rgba[1] / 255 + .072 * rgba[2] / 255;
-
-  return brightness;
+  return .2126 * rgba[0] / 255 + .7152 * rgba[1] / 255 + .072 * rgba[2] / 255;
 }
 
 /**
@@ -72,12 +60,11 @@ var calcBrightness = function(dom, attr) {
  * @return false 不包含
  * 
  */
-var hasIgnoreClass = function(dom) {
-  var classList = dom.className,
-	    ignoreClassList = option.ignoreClass;
+Element.prototype.hasIgnoreClass = function() {
+  var ignoreClassList = OPTIONS.ignoreClass, cls;
 
-  for(var i in ignoreClassList) {
-    if( classList.indexOf(ignoreClassList[i]) > -1 ) {
+  for(cls of ignoreClassList) {
+    if( this.className.indexOf(cls) > -1 ) {
       return true;
     }
   }
@@ -91,20 +78,21 @@ var hasIgnoreClass = function(dom) {
  * @return 1 元素没有设置背景色
  * @return 0 此元素依照config中的设置跳过不处理
  */
-var replaceBackgroundColor = function(dom) {
-  // 是否需要替换背景色
-  if( !option.replaceTextInput && dom.nodeName == 'INPUT' ) return 0;
-  // 规避hightlighted/code等代码区块
-  if( hasIgnoreClass(dom) ) return 0;
+Element.prototype.replaceBackgroundColor = function() {
+  // case.1 是input[type=text]，用户选择「不替换输入框颜色」
+  // case.2 此元素包含例外class，如highlight/code等
+  if( (!OPTIONS.basic.replaceTextInput && this.nodeName == 'INPUT') || this.hasIgnoreClass() ) return 0;
 
   // 根据亮度判断是否需要替换
-  var brightness = calcBrightness(dom, 'background-color');
+  var brightness = this.calcBrightness('background-color');
   if( brightness === false ) return 1;
 
-  if( brightness > option.bgColorBrightnessThreshold ) {
-    dom.style.webkitTransition = 'background .3s ease';
-    setStyle(dom, 'background-color', option.replaceBgWithColor);
-    // dom.style.backgroundColor = 'rgba(0, 0, 0, .1)';
+  if( brightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
+    var self = this;
+    self.setStyle('transition', 'background-color .3s ease');
+    setTimeout(function() {
+      self.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
+    }, 0);
     return 3;
   } else {
     return 2;
@@ -115,34 +103,30 @@ var replaceBackgroundColor = function(dom) {
  * 修改Border颜色
  *
  */
-var replaceBorderColor = function(dom) {
+Element.prototype.replaceBorderColor = function() {
   // 四边各自计算
-  var prefixs = ['top', 'bottom', 'left', 'right'];
+  var sides = ['top', 'bottom', 'left', 'right'], side;
 
-  var _borderWidthAttr = 'border-%s-width',
-	    borderWidthAttr,
-	    _borderColorAttr = 'border-%s-color',
-	    borderColorAttr,
-	    borderWidth, borderBrightness, prefix;
+  var borderWidthAttrString = 'border-%s-width',
+	    borderColorAttrString = 'border-%s-color', borderColorAttr,
+	    borderWidth, borderBrightness;
 
-  for(i in prefixs) {
-    prefix = prefixs[i];
+  for(side of sides) {
     // 先判断下是否有边框
-    borderWidthAttr = _borderWidthAttr.replace('%s', prefix);
-    borderWidth = getStyle(dom, borderWidthAttr);
+    borderWidth = this.getStyle(borderWidthAttrString.replace('%s', side));
     if( !borderWidth ) continue;
 
     // 然后判断是否需要替换颜色
-    borderColorAttr = _borderColorAttr.replace('%s', prefix);
-    borderBrightness = calcBrightness(dom, borderColorAttr);
+    borderColorAttr = borderColorAttrString.replace('%s', side);
+    borderBrightness = this.calcBrightness(borderColorAttr);
     if( !borderBrightness ) continue;
 
-    if( borderBrightness > option.borderColorBrightnessThreshold ) {
-      setStyle(dom, borderColorAttr, option.replaceBorderWithColor);
+    if( borderBrightness > OPTIONS.basic.borderColorBrightnessThreshold ) {
+      this.setStyle(borderColorAttr, OPTIONS.basic.replaceBorderWithColor);
 
       // 是否替换边框样式
-      if( option.replaceBorderStyle && Math.round(parseFloat(borderWidth)) == 1 ) {
-        setStyle(dom, 'border-' + prefix + '-style', 'dashed');
+      if( OPTIONS.basic.replaceBorderStyle && Math.round(Number(borderWidth)) == 1 ) {
+        this.setStyle('border-' + side + '-style', 'dashed');
       }
     }
   }
@@ -152,32 +136,32 @@ var replaceBorderColor = function(dom) {
  * 修改文字颜色
  *
  */
-var replaceTextColor = function(dom) {
-  if( !option.replaceTextColor ) return false;
+Element.prototype.replaceTextColor = function() {
+  if( !OPTIONS.basic.replaceTextColor ) return false;
 
   // 文字亮度
-  var brightness = calcBrightness(dom, 'color'),
-	    color;
+  var brightness = this.calcBrightness('color'), color;
   if( !brightness ) return false;
 
-  // 确认此元素亮度过高且自身没有背景图片
-  var bgImage = getStyle(dom, 'background-image');
-  if( brightness > option.borderColorBrightnessThreshold &&
+  // 确认此元素亮度过高且没有背景图片
+  var bgImage = this.getStyle('background-image');
+  if( brightness > OPTIONS.basic.borderColorBrightnessThreshold &&
     (!bgImage || bgImage == 'none') ) {
     // 替换文字颜色
-    setStyle(dom, 'color', '#000');
+    this.setStyle('color', '#000');
   }
+
+  // TODO: 有时候虽然当前元素没有背景图片，但其实文字浮动在父元素或其他元素的背景图片上，造成文字看不清
 }
 
 /**
  * 替换颜色啦啦啦
- * @param Node dom
  * @param bool processOther 是否处理边框、文字等其他颜色，此参数继承
  *
  */
-var replaceColor = function(dom, processOther) {
+Element.prototype.replaceColor = function(processOther) {
   // 替换背景色
-  var bgColorReplacReturn = replaceBackgroundColor(dom);
+  var bgColorReplacReturn = this.replaceBackgroundColor();
   // 根据是否替换了背景色决定是否要处理边框、文字颜色等
   if( bgColorReplacReturn == 3 ) {
     processOther = true;
@@ -188,16 +172,16 @@ var replaceColor = function(dom, processOther) {
   // 是否处理子元素
   if( processOther ) {
     // 替换边框色
-    replaceBorderColor(dom);
+    this.replaceBorderColor();
     // 替换文本颜色
-    replaceTextColor(dom);
+    this.replaceTextColor();
   }
 
   // 递归
-  var c = dom.childNodes, len = c.length, i;
-  for(i = 0; i < len; i++) {
-    if( c[i].nodeType == 1 ) {
-      replaceColor(c[i], processOther);
+  var children = this.childNodes, child;
+  for(child of children) {
+    if( child.nodeType == 1 ) {
+      child.replaceColor(processOther);
     }
   }
 }
@@ -207,69 +191,65 @@ var replaceColor = function(dom, processOther) {
  * 
  */
 function restoreColor() {
-  var nodes = document.querySelectorAll('.eye-protector-processed'),
-	    len = nodes.length,
-	    i, j, node, originStyleEncoded, originalStyle;
-
-  for( i = 0; i < len; i++ ) {
-    node = nodes[i];
-    originalStyle = $(node).data('eye-protector-original-style');
+  var nodes = $$('.eye-protector-processed'), node, originalStyle, key;
+  for(node of nodes) {
+    originalStyle = STYLES.get(node);
     if( !originalStyle ) continue;
 
-    for(j in originalStyle) {
-      node.style[j] = originalStyle[j];
+    for(key in originalStyle) {
+      if( key == 'transition' ) {
+        setTimeout(function() {
+          node.style.transition = originalStyle.transition;
+        }, 300);
+      } else {
+        node.style[key] = originalStyle[key];
+      }
     }
   }
 }
 
 function protectEye() {
   // 替换body
-  var bodyBgBrightness = calcBrightness(document.body);
-  if( !bodyBgBrightness || bodyBgBrightness > option.bgColorBrightnessThreshold ) {
-    setStyle(document.body, 'background-color', option.replaceBgWithColor);
+  var body = document.body,
+      bodyBgBrightness = body.calcBrightness('background-color');
+  if( !bodyBgBrightness || bodyBgBrightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
+    body.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
+    body.setStyle('transition', 'background-color .3s ease');
   }
   // 遍历DOM替换成目标色
-  replaceColor(document.body);
+  body.replaceColor();
 }
 
-function start() {
+function forceReplaceLoopStart() {
   protectEye();
 
-  if( option['loopDomainList'].indexOf(currentHost) > -1 ) {
-    timer = setInterval(protectEye, 1000);
+  if( OPTIONS.forceReplaceList.indexOf(host) > -1 ) {
+    forceReplaceLoopTicker = setInterval(protectEye, 1000);
   } else {
-    timer = clearInterval(timer);
+    clearInterval(forceReplaceLoopTicker);
   }
 }
 
-function pause() {
-  timer = clearInterval(timer);
+function forceReplaceLoopStop() {
   restoreColor();
+  clearInterval(forceReplaceLoopTicker);
 }
 
-function check() {
+function init() {
   readOption(function() {
-    if( option['ignoreDomainList'].indexOf(currentHost) > -1 ) {
-      pause();
+    if( (OPTIONS.basic.mode == 'positive' && OPTIONS.positiveList.indexOf(host) == -1) ||
+        (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
+      forceReplaceLoopStart();
     } else {
-      start();
+      forceReplaceLoopStop();
     }
   });
 }
 
-var currentHost = '',
-  timer;
-
-function init() {
-  // 保存域名
-  currentHost = getHost(document.location.href);
-
-  // GO
-  check();
-
-  // 设置改变时重新读取设置
-  chrome.storage.onChanged.addListener(check);
-}
-
+var forceReplaceLoopTicker;
+// 保存域名
+var host = getHost(document.location.href);
+// 设置改变时重新读取设置
+chrome.storage.onChanged.addListener(init);
 // GO
 init();
