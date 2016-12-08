@@ -44,11 +44,6 @@ function init() {
           (mode == 'passive' && list.indexOf(host) > -1) ) {
         $('on').classList.add('checked');
       }
-
-      // 是否强制替换
-      if( OPTIONS.forceReplaceList.indexOf(host) > -1 ) {
-        $('forceReplaceList').classList.add('checked');
-      }
     })
   });
 

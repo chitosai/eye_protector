@@ -222,31 +222,27 @@ function protectEye() {
   body.replaceColor();
 }
 
-function start() {
-  protectEye();
-  if( OPTIONS.forceReplaceList.indexOf(host) > -1 ) {
-    clearInterval(forceReplaceLoopTicker);
-    forceReplaceLoopTicker = setInterval(protectEye, 1000);
-  }
-}
-
-function stop() {
-  clearInterval(forceReplaceLoopTicker);
-  restoreColor();
-}
-
 function init() {
   readOption(function() {
     if( (OPTIONS.basic.mode == 'positive' && OPTIONS.positiveList.indexOf(host) == -1) ||
         (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
-      start();
+      protectEye();
+      // 取消「强制替换模式」，改为自动根据页面dom变化重新执行替换
+      window.addEventListener('DOMSubtreeModified', function(ev) {
+        try {
+          ev.target.replaceColor();
+        } catch(err) {
+          // 有时候e.target不是Element元素，这时候就取不到replaceColor
+          // 这样的元素目测本来就不需要处理，随他去吧
+        }
+      });
     } else {
-      stop();
+      restoreColor();
+      window.removeEventListender('DOMSubtreeModified');
     }
   });
 }
 
-var forceReplaceLoopTicker;
 // 保存域名
 var host = getHost(document.location.href);
 // 设置改变时重新读取设置

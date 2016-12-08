@@ -22,9 +22,7 @@ var OPTIONS = {
   // 主动模式 - 忽略的网站列表
   positiveList: [],
   // 被动模式 - 要替换的域名列表
-  passiveList: [],
-  // 强制替换的页面列表
-  forceReplaceList: []
+  passiveList: []
 }
 
 // 检查对象是否为空
