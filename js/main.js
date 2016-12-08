@@ -222,23 +222,25 @@ function protectEye() {
   body.replaceColor();
 }
 
+function onDOMTreeModified(ev) {
+  try {
+    ev.target.replaceColor();
+  } catch(err) {
+    // 有时候e.target不是Element元素，这时候就取不到replaceColor
+    // 这样的元素目测本来就不需要处理，随他去吧
+  }
+}
+
 function init() {
   readOption(function() {
     if( (OPTIONS.basic.mode == 'positive' && OPTIONS.positiveList.indexOf(host) == -1) ||
         (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
       protectEye();
       // 取消「强制替换模式」，改为自动根据页面dom变化重新执行替换
-      window.addEventListener('DOMSubtreeModified', function(ev) {
-        try {
-          ev.target.replaceColor();
-        } catch(err) {
-          // 有时候e.target不是Element元素，这时候就取不到replaceColor
-          // 这样的元素目测本来就不需要处理，随他去吧
-        }
-      });
+      window.addEventListener('DOMSubtreeModified', onDOMTreeModified);
     } else {
       restoreColor();
-      window.removeEventListender('DOMSubtreeModified');
+      window.removeEventListener('DOMSubtreeModified', onDOMTreeModified);
     }
   });
 }
