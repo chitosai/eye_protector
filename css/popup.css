@@ -1,6 +1,6 @@
 body {
   font: 14px "PingFangSC-Light", "Segoe UI", "Microsoft YaHei";
-  margin: .6rem .3rem;
+  margin: .6rem;
   width: 150px;
 }
 #option-page {
@@ -10,9 +10,7 @@ body {
 #option-page .option-list {
   margin-bottom: 1.6rem;
 }
-#error{
-  color: #aaa;
-}
+
 .title {
   font-weight: bold;
   font-size: 1.5rem;
@@ -44,6 +42,7 @@ body {
 .desc b {
   color: #777;
 }
+
 #color-preview{
   border-radius: 3px;
   display: inline-block;

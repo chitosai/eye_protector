@@ -2,18 +2,62 @@
 <html lang="cn">
 <head>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" href="css/popup.css">
+	<style>
+		body{
+			font: 14px "PingFangSC-Light", "Segoe UI", "Microsoft YaHei";
+			width: 150px;
+			margin: 0;
+		}
+		#error{
+		  color: #aaa;
+		  padding: .5rem;
+		}
+		#error:empty{
+			display: none;
+		}
+		.list {
+		  padding: .5rem;
+		}
+		.item {
+		  border-radius: 3px;
+		  cursor: pointer;
+		  line-height: 2em;
+		  text-indent: .6rem;
+		  margin-bottom: 1px
+		}
+		.item:hover {
+		  background: #eee;
+		}
+		.item.checked {
+		  background: #41ad49;
+		  color: #fff;
+		  cursor: default;
+		}
+		#current{
+			background: #f7f7f7;
+			border-top: 1px solid #e3e3e3;
+	    color: #888;
+	    font-size: 10px;
+	    line-height: 3em;
+	    margin: 0;
+	    text-align: center;
+		}
+		#mode{
+	    color: #000;
+	    outline: 0;
+		}
+	</style>
 </head>
 <body>
 	<div id="normal">
-		<div id="domain"></div>
 		<div class="list">
-			<div class="item" id="forceReplaceList">强制替换此网站</div>
-			<div class="item" id="passiveList" style="display: none;">对此网站生效</div>
-			<div class="item" id="positiveList" style="display: none;">忽略此网站</div>
+			<div class="item" id="passiveList" style="display: none;">对此域名生效</div>
+			<div class="item" id="positiveList" style="display: none;">忽略此域名</div>
+			<div class="item" id="forceReplaceList" title="点击「生效」后发现仍有未被替换的亮背景色请尝试开启此模式">强力替换</div>
 		</div>
+		<p id="current">正在<a href="" target="_blank" id="mode"></a>下运行</p>
 	</div>
-	<p id="error"></p>
+	<div id="error"></div>
 	<!-- end -->
 	<script src="js/utility.js"></script>
 	<script src="js/option.popup.js"></script>

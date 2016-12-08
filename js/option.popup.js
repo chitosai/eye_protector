@@ -20,9 +20,7 @@ function init() {
   // 获取当前激活tab的域名
   chrome.tabs.query({'active': true, 'currentWindow': true}, function(tabs) {
     url = tabs[0].url, host = getHost(url);
-    if( host ) {
-      $('domain').textContent = host;
-    } else {
+    if( !host ) {
       $('normal').style.display = 'none';
       $('error').textContent = '此插件仅在 http/https 协议的域名下生效。';
       return;
@@ -34,6 +32,9 @@ function init() {
       var mode = OPTIONS.basic.mode,
           list = OPTIONS[mode + 'List'],
           btn = $(mode + 'List');
+
+      $('mode').textContent = mode == 'positive' ? '主动模式' : '被动模式';
+      $('mode').href = 'chrome-extension://' + chrome.app.getDetails().id + '/options.html';
 
       if(list.indexOf(host) > -1) {
         btn.classList.add('checked');
