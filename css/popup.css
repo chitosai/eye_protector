@@ -1,43 +1,43 @@
-body{
-    font: 14px "PingFangSC-Light", "Segoe UI", "Microsoft YaHei";
-    margin: .6rem .3rem;
-    width: 150px;
+body {
+  font: 14px "PingFangSC-Light", "Segoe UI", "Microsoft YaHei";
+  margin: .6rem .3rem;
+  width: 150px;
 }
-#option-page{
-    width: 300px;
-    margin: 1rem auto;
+#option-page {
+  width: 300px;
+  margin: 1rem auto;
 }
-#option-page .option-list{
-    margin-bottom: 1.6rem;
+#option-page .option-list {
+  margin-bottom: 1.6rem;
 }
-.option-title{
-    font-weight: bold;
-    font-size: 1.5rem;
-    margin: 0 .3rem .6rem;
+.title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin: 0 .3rem .6rem;
 }
-.option-list{
-    margin-bottom: .6rem;
+.list {
+  margin-bottom: .6rem;
 }
-.option-item{
-    border-radius: 3px;
-    cursor: pointer;
-    line-height: 2em;
-    padding: 0 25px;
+.item {
+  border-radius: 3px;
+  cursor: pointer;
+  line-height: 2em;
+  padding: 0 25px;
 }
-.option-item:hover{
-    background: #eee;
+.item:hover {
+  background: #eee;
 }
-.option-item.checked{
-    background: url('../images/check.png') 0 8px no-repeat;
-    color: #41ad49;
-    cursor: default;
+.item.checked {
+  background: url('../images/check.png') 0 8px no-repeat;
+  color: #41ad49;
+  cursor: default;
 }
-.option-desc{
-    color: #aaa;
-    line-height: 1.625em;
-    margin: 0;
-    padding-bottom: .3rem;
+.desc {
+  color: #aaa;
+  line-height: 1.625em;
+  margin: 0;
+  padding-bottom: .3rem;
 }
-.option-desc b{
-    color: #777;
+.desc b {
+  color: #777;
 }
