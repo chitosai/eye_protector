@@ -4,6 +4,8 @@ var OPTIONS = {
     mode: 'positive',
     // 背景色
     replaceBgWithColor: '#C1E6C6',
+    // 豆沙绿
+    defaultBgColor: '#C1E6C6',
     // 替换背景色的亮度阈值
     bgColorBrightnessThreshold: .9,
     // 边框色
@@ -61,8 +63,8 @@ function readOption(callback) {
   });
 }
 
-function saveOption() {
-  storage.set({'option': OPTIONS});
+function saveOption(callback) {
+  storage.set({'option': OPTIONS}, callback);
 }
 
 // 获取当前激活标签页域名

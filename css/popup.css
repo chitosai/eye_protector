@@ -13,7 +13,7 @@ body {
 .title {
   font-weight: bold;
   font-size: 1.5rem;
-  margin: 0 .3rem .6rem;
+  margin: 0 .1rem .6rem;
 }
 .list {
   margin-bottom: .6rem;
@@ -40,4 +40,22 @@ body {
 }
 .desc b {
   color: #777;
+}
+#color-preview{
+  border-radius: 3px;
+  display: inline-block;
+  width: 20px;
+  height: 1em;
+  padding: 3px;
+  vertical-align: middle;
+}
+#color{
+  outline: 0;
+  width: 6em;
+}
+#color-save-success{
+  display: none;
+  margin: 5px 0 0;
+  color: #aaa;
+  font-size: 12px;
 }

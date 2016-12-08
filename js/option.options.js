@@ -24,6 +24,37 @@ var CLICKLISTENERS = {
 
     OPTIONS.basic[key] = this.id;
     saveOption();
+  },
+  pickColor: function() {
+  	var color = this.value.trim().replace(/[^0-9a-fA-F]/g, ''),
+        preview = $('color-preview'),
+				btn = $('color-save');
+    // 确保color中不包含非0-9a-fA-F的字符，且长度为3或6
+  	if( color == this.value && (color.length == 3 || color.length == 6) ) {
+	  	preview.style.backgroundColor = '#' + color;
+  		btn.disabled = false;
+  	} else {
+  		preview.style.backgroundColor = '#fff';
+  		btn.disabled = true;
+  	}
+  },
+  saveColor: function() {
+    var color = $('color').value.trim().toUpperCase();
+    if( color.length == 3 ) {
+      color = [color[0], color[0], color[1], color[1], color[2], color[2]].join('');
+    }
+    OPTIONS.basic.replaceBgWithColor = '#' + color;
+    saveOption(function() {
+      $('color-save-success').style.display = 'block';
+    });
+  },
+  restoreColor: function() {
+    var color = OPTIONS.basic.defaultBgColor;
+    OPTIONS.basic.replaceBgWithColor = color;
+    saveOption(function() {
+      $('color-preview').style.backgroundColor = color;
+      $('color').value = color.slice(1);
+    });
   }
 }
 
@@ -43,6 +74,10 @@ function init() {
 
     // 工作模式暂时没想到怎么做通用，就做个特例吧
     $(OPTIONS.basic.mode).classList.add('checked');
+
+    // 背景色
+    $('color-preview').style.backgroundColor = OPTIONS.basic.replaceBgWithColor;
+    $('color').value = OPTIONS.basic.replaceBgWithColor.slice(1);
   });
 
   // 修改设置
@@ -50,6 +85,11 @@ function init() {
   nodes.forEach(function(node) {
     node.addEventListener('click', CLICKLISTENERS[node.getAttribute('type')]);
   });
+
+  // 修改背景色
+  $('color').addEventListener('input', CLICKLISTENERS.pickColor);
+  $('color-save').addEventListener('click', CLICKLISTENERS.saveColor);
+  $('color-restore').addEventListener('click', CLICKLISTENERS.restoreColor);
 }
 
 init();
