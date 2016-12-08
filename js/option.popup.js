@@ -3,6 +3,10 @@ var url, host;
 function onClick() {
   var key = this.id;
 
+  if( key == 'on' ) {
+    key = OPTIONS.basic.mode + 'List';
+  }
+
   // 根据选项类型反转选项
   var list = OPTIONS[key];
   if( list.indexOf(host) > -1 ) {
@@ -28,20 +32,18 @@ function init() {
 
     // 读取当前域名的配置
     readOption(function() {
-      // 是否在主动模式/被动模式的特例名单里
       var mode = OPTIONS.basic.mode,
-          list = OPTIONS[mode + 'List'],
-          btn = $(mode + 'List');
+          list = OPTIONS[mode + 'List'];
 
+      // 显示当前模式
       $('mode').textContent = mode == 'positive' ? '主动模式' : '被动模式';
       $('mode').href = 'chrome-extension://' + chrome.app.getDetails().id + '/options.html';
 
-      if(list.indexOf(host) > -1) {
-        btn.classList.add('checked');
+      // 根据运行模式产生按钮状态
+      if( (mode == 'positive' && list.indexOf(host) == -1) || 
+          (mode == 'passive' && list.indexOf(host) > -1) ) {
+        $('on').classList.add('checked');
       }
-
-      // 显示对应模式的按钮
-      btn.style.display = 'block';
 
       // 是否强制替换
       if( OPTIONS.forceReplaceList.indexOf(host) > -1 ) {
