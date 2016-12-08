@@ -215,10 +215,11 @@ function restoreColor() {
 }
 
 function protectEye() {
-  // 替换body
+  // body需要特殊处理，当body的background-color是transparent时实际上页面是白色
+  // 此时也需要给body设置背景色
   var body = document.body,
-      bodyBgBrightness = body.calcBrightness('background-color');
-  if( !bodyBgBrightness || bodyBgBrightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
+      brightness = body.calcBrightness('background-color');
+  if( !brightness || brightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
     body.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
     body.setStyle('transition', 'background-color .3s ease');
   }
@@ -226,28 +227,26 @@ function protectEye() {
   body.replaceColor();
 }
 
-function forceReplaceLoopStart() {
+function start() {
   protectEye();
-
   if( OPTIONS.forceReplaceList.indexOf(host) > -1 ) {
-    forceReplaceLoopTicker = setInterval(protectEye, 1000);
-  } else {
     clearInterval(forceReplaceLoopTicker);
+    forceReplaceLoopTicker = setInterval(protectEye, 1000);
   }
 }
 
-function forceReplaceLoopStop() {
-  restoreColor();
+function stop() {
   clearInterval(forceReplaceLoopTicker);
+  restoreColor();
 }
 
 function init() {
   readOption(function() {
     if( (OPTIONS.basic.mode == 'positive' && OPTIONS.positiveList.indexOf(host) == -1) ||
         (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
-      forceReplaceLoopStart();
+      start();
     } else {
-      forceReplaceLoopStop();
+      stop();
     }
   });
 }
