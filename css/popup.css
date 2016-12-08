@@ -10,6 +10,9 @@ body {
 #option-page .option-list {
   margin-bottom: 1.6rem;
 }
+#error{
+  color: #aaa;
+}
 .title {
   font-weight: bold;
   font-size: 1.5rem;

@@ -23,7 +23,9 @@ function init() {
     if( host ) {
       $('domain').textContent = host;
     } else {
-      console.error('无法获取当前页面的域名');
+      $('normal').style.display = 'none';
+      $('error').textContent = '此插件仅在 http/https 协议的域名下生效。';
+      return;
     }
 
     // 读取当前域名的配置

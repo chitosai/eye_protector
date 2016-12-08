@@ -5,12 +5,15 @@
 	<link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
-	<div id="domain" class="title"></div>
-	<div class="list">
-		<div class="item" id="forceReplaceList">强制替换此网站</div>
-		<div class="item" id="passiveList" style="display: none;">对此网站生效</div>
-		<div class="item" id="positiveList" style="display: none;">忽略此网站</div>
+	<div id="normal">
+		<div id="domain"></div>
+		<div class="list">
+			<div class="item" id="forceReplaceList">强制替换此网站</div>
+			<div class="item" id="passiveList" style="display: none;">对此网站生效</div>
+			<div class="item" id="positiveList" style="display: none;">忽略此网站</div>
+		</div>
 	</div>
+	<p id="error"></p>
 	<!-- end -->
 	<script src="js/utility.js"></script>
 	<script src="js/option.popup.js"></script>
