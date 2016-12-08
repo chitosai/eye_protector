@@ -5,30 +5,38 @@
 	<link rel="stylesheet" href="css/options.css">
 </head>
 <body id="option-page">
-	<div class="title">工作模式</div>
-	<div class="list">
-		<div class="item" type="radio" id="positive" name="mode">
-			主动模式
-			<p class="desc">默认<b>替换</b>所有网页的颜色，只有被您设置为「忽略」的域名不进行替换。</p>
+
+	<div id="col-2">
+		<div class="title">关于</div>
+		<div class="about">· Made by <a href="http://weibo.com/chitosai" target="_blank">@千歳TheC</a></div>
+		<div class="about">· 代码托管于<a href="https://github.com/chitosai/eye_protector" target="_blank">Github</a>，如果喜欢这个扩展请给我一个Star，谢谢：）</div>
+	</div>
+	<div id="col-1">
+		<div class="title">工作模式</div>
+		<div class="list">
+			<div class="item" type="radio" id="positive" name="mode">
+				主动模式
+				<p class="desc">默认<b>替换</b>所有网页的颜色，您可以在不需要替换颜色的域名下关闭护眼功能。</p>
+			</div>
+			<div class="item" type="radio" id="passive" name="mode">
+				被动模式
+				<p class="desc">默认<b>不替换</b>任何网页的颜色，您需要自行设置哪些域名需要开启护眼功能。</p>
+			</div>
 		</div>
-		<div class="item" type="radio" id="passive" name="mode">
-			被动模式
-			<p class="desc">默认<b>不替换</b>任何网页的颜色，只有被您设置为「生效」的域名进行替换。</p>
+		<div class="title">全局设置</div>
+		<div class="list">
+			<div class="item" type="check" id="replaceTextColor">文字替换为黑色</div>
+			<div class="item" type="check" id="replaceTextInput">替换输入框颜色</div>
 		</div>
+		<div class="title">自定义背景色</div>
+		<div class="color">
+			<span id="color-preview"></span>
+			#<input type="text" id="color">
+			<button id="color-save">保存</button>
+			<button id="color-restore">还原为豆沙绿</button>
+		</div>
+		<p id="color-save-success">保存成功</p>
 	</div>
-	<div class="title">全局设置</div>
-	<div class="list">
-		<div class="item" type="check" id="replaceTextColor">文字替换为黑色</div>
-		<div class="item" type="check" id="replaceTextInput">替换输入框颜色</div>
-	</div>
-	<div class="title">自定义背景色</div>
-	<div class="color">
-		<span id="color-preview"></span>
-		#<input type="text" id="color">
-		<button id="color-save">保存</button>
-		<button id="color-restore">还原为豆沙绿</button>
-	</div>
-	<p id="color-save-success">保存成功</p>
 	<!-- end -->
 	<script src="js/utility.js"></script>
 	<script src="js/option.options.js"></script>
