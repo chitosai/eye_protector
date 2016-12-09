@@ -1,8 +1,7 @@
 var url, host;
 
 function onClick() {
-  var key = OPTIONS.basic.mode + 'List',
-      list = OPTIONS[key];
+  var list = OPTIONS[this.id+'List'];
       
   if( list.indexOf(host) > -1 ) {
     list.remove(host);
@@ -28,22 +27,25 @@ function init() {
     // 读取当前域名的配置
     readOption(function() {
       var mode = OPTIONS.basic.mode,
-          list = OPTIONS[mode + 'List'];
+          list = OPTIONS[mode + 'List'],
+          btn = $(mode);
 
       // 显示当前模式
-      $('mode').textContent = mode == 'positive' ? '主动模式' : '被动模式';
+      $('mode').textContent = ( mode == 'positive' ? '主动模式' : '被动模式' );
       $('mode').href = 'chrome-extension://' + chrome.app.getDetails().id + '/options.html';
 
       // 根据运行模式产生按钮状态
-      if( (mode == 'positive' && list.indexOf(host) == -1) || 
-          (mode == 'passive' && list.indexOf(host) > -1) ) {
-        $('on').classList.add('checked');
+      btn.style.display = 'block';
+      if( list.indexOf(host) > -1 ) {
+        btn.classList.add('checked');
       }
     })
   });
 
   // 修改设置
-  $('on').addEventListener('click', onClick);
+  $$('.item').forEach(function(node) {
+    node.addEventListener('click', onClick);
+  });
 }
 
 init();
