@@ -1,8 +1,66 @@
 {
 	"extName": {
-		"message": "保护眼睛"
+		"message": "Eye Protector"
 	},
 	"extDescription": {
-		"message": "阿姆斯特朗回旋喷气式阿姆斯特朗墨镜"
+		"message": "Maybe the best eye-protect extension of Chrome."
+	},
+
+	// popup.html
+	"strProtocolMsg": {
+		"message": "The extension only works under http/https url."
+	},
+	"strPositive": {
+		"message": "Positive Mode"
+	},
+	"strPassive": {
+		"message": "Passive Mode"
+	},
+	"strEnableForCurrentDomain": {
+		"message": "Enable for this domain"
+	},
+	"strDisableForCurrentDomain": {
+		"message": "Disable for this domain"
+	},
+	"strCurrentMode": {
+		"message": "Running in <a href='' target='_blank' id='mode'></a>"
+	},
+
+	// options.html
+	"strAbout": {
+		"message": "About"
+	},
+	"strRepository": {
+		"message": "· Source code on <a href='https://github.com/chitosai/eye_protector' target='_blank'>Github</a>. If you like the extension, please give me a star, thanks ：）"
+	},
+	"strMode": {
+		"message": "Mode"
+	},
+	"strPositiveModeDesc": {
+		"message": "Positive<p class='desc'><b>Replace</b> background color for all domains，you can disable eye-protect for particular domains.</p>"
+	},
+	"strPassiveModeDesc": {
+		"message": "Passive<p class='desc'><b>Not replace</b> background color by default，you can enable eye-protect for particular domains mamually.</p>"
+	},
+	"strGlobalSetting": {
+		"message": "Global Settings"
+	},
+	"strReplaceTextColor": {
+		"message": "Replace text color to black(#000)"
+	},
+	"strReplaceInputColor": {
+		"message": "Replace color of INPUTs"
+	},
+	"strCustomBgColor": {
+		"message": "Custom background color"
+	},
+	"strSave": {
+		"message": "Save"
+	},
+	"strRestore": {
+		"message": "Restore to default color"
+	},
+	"strSaveSuccess": {
+		"message": "New color saved"
 	}
 }

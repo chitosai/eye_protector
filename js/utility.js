@@ -83,9 +83,13 @@ function _(msg) {
   return chrome.i18n.getMessage(msg);
 }
 function i18n() {
+  // render texts
   var nodes = $$('[data-text]'), text;
   nodes.forEach(function(node) {
     text = _(node.dataset.text);
     node.innerHTML = text;
   });
+
+  // add language to body
+  document.body.setAttribute('lang', chrome.i18n.getUILanguage());
 }

@@ -23,7 +23,7 @@
 		"message": "此域名关闭护眼模式"
 	},
 	"strCurrentMode": {
-		"message": "正在<a href=' target='_blank' id='mode'></a>下运行"
+		"message": "正在<a href='' target='_blank' id='mode'></a>下运行"
 	},
 
 	// options.html
