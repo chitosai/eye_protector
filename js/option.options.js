@@ -90,6 +90,11 @@ function init() {
   $('color').addEventListener('input', CLICKLISTENERS.pickColor);
   $('color-save').addEventListener('click', CLICKLISTENERS.saveColor);
   $('color-restore').addEventListener('click', CLICKLISTENERS.restoreColor);
+
+  // options页面在打开的情况下，如果用户切到其他tabs修改了OPTIONS，这边需要及时更新
+  // 不然可能出现options页面打开太久，OPTIONS中的list已经不是最新的，然后options触发了一次saveOptions造成
+  // options页面打开之后的修改丢失的情况
+  chrome.storage.onChanged.addListener(readOption);
 }
 
 init();
