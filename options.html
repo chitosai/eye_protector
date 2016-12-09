@@ -7,35 +7,35 @@
 <body id="option-page">
 
 	<div id="col-2">
-		<div class="title">关于</div>
+		<div class="title" data-text="strAbout">关于</div>
 		<div class="about">· Made by <a href="http://weibo.com/chitosai" target="_blank">@千歳TheC</a></div>
-		<div class="about">· 代码托管于<a href="https://github.com/chitosai/eye_protector" target="_blank">Github</a>，如果喜欢这个扩展请给我一个Star，谢谢：）</div>
+		<div class="about" data-text="strRepository">· 代码托管于<a href='https://github.com/chitosai/eye_protector' target='_blank'>Github</a>，如果喜欢这个扩展请给我一个Star，谢谢：）</div>
 	</div>
 	<div id="col-1">
-		<div class="title">工作模式</div>
+		<div class="title" data-text="strMode">工作模式</div>
 		<div class="list">
-			<div class="item" type="radio" id="positive" name="mode">
+			<div class="item" type="radio" id="positive" name="mode" data-text="strPositiveModeDesc">
 				主动模式
 				<p class="desc">默认<b>替换</b>所有网页的颜色，您可以在不需要替换颜色的域名下关闭护眼功能。</p>
 			</div>
-			<div class="item" type="radio" id="passive" name="mode">
+			<div class="item" type="radio" id="passive" name="mode" data-text="strPassiveModeDesc">
 				被动模式
 				<p class="desc">默认<b>不替换</b>任何网页的颜色，您需要自行设置哪些域名需要开启护眼功能。</p>
 			</div>
 		</div>
-		<div class="title">全局设置</div>
+		<div class="title" data-text="strGlobalSetting">全局设置</div>
 		<div class="list">
-			<div class="item" type="check" id="replaceTextColor">文字替换为黑色</div>
-			<div class="item" type="check" id="replaceTextInput">替换输入框颜色</div>
+			<div class="item" type="check" id="replaceTextColor" data-text="strReplaceTextColor">文字替换为黑色</div>
+			<div class="item" type="check" id="replaceTextInput" data-text="strReplaceInputColor">替换输入框颜色</div>
 		</div>
-		<div class="title">自定义背景色</div>
+		<div class="title" data-text="strCustomBgColor">自定义背景色</div>
 		<div class="color">
 			<span id="color-preview"></span>
 			#<input type="text" id="color">
-			<button id="color-save">保存</button>
-			<button id="color-restore">还原为豆沙绿</button>
+			<button id="color-save" data-text="strSave">保存</button>
+			<button id="color-restore" data-text="strRestore">还原为豆沙绿</button>
 		</div>
-		<p id="color-save-success">保存成功</p>
+		<p id="color-save-success" data-text="strSaveSuccess">保存成功</p>
 	</div>
 	<!-- end -->
 	<script src="js/utility.js"></script>

@@ -77,3 +77,15 @@ function getHost(url) {
     return false;
   }
 }
+
+// i18n
+function _(msg) {
+  return chrome.i18n.getMessage(msg);
+}
+function i18n() {
+  var nodes = $$('[data-text]'), text;
+  nodes.forEach(function(node) {
+    text = _(node.dataset.text);
+    node.innerHTML = text;
+  });
+}

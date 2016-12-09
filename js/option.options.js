@@ -59,6 +59,9 @@ var CLICKLISTENERS = {
 }
 
 function init() {
+  // i18n
+  i18n();
+
   // 读取设置
   readOption(function() {
     var options = OPTIONS.basic,
