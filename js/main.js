@@ -2,12 +2,12 @@
 if( typeof Map != 'function' ) {
   Map = function() {};
   Map.uid = 1;
-  Map.data = {}
+  Map.prototype.data = {}
   Map.prototype.set = function(obj, value) {
-    Map.data[obj.uid || (obj.uid = Map.uid++)] = value;
+    this.data[obj.uid || (obj.uid = Map.uid++)] = value;
   }
   Map.prototype.get = function(obj) {
-    return obj.uid ? Map.data[obj.uid] : false;
+    return obj.uid ? this.data[obj.uid] : false;
   }
 }
 
