@@ -4,10 +4,10 @@ if( typeof Map != 'function' ) {
   Map.uid = 1;
   Map.data = {}
   Map.prototype.set = function(obj, value) {
-    Map.data[this.uid || (this.uid = Map.uid++)] = value;
+    Map.data[obj.uid || (obj.uid = Map.uid++)] = value;
   }
   Map.prototype.get = function(obj) {
-    return this.uid ? Map.data[this.uid] : false;
+    return obj.uid ? Map.data[obj.uid] : false;
   }
 }
 
