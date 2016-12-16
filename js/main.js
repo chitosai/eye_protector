@@ -74,11 +74,11 @@ Element.prototype.calcBrightness = function(key) {
  * 
  */
 Element.prototype.hasIgnoreClass = function() {
-  var ignoreClassList = OPTIONS.ignoreClass, cls;
+  var ignoreClassList = OPTIONS.ignoreClass, i = 0, len = ignoreClass.length;
 
-  for(cls of ignoreClassList) {
+  for( ; i < len; i++ ) {
     try{
-      if( this.className.indexOf(cls) > -1 ) {
+      if( this.className.indexOf(ignoreClassList[i]) > -1 ) {
         return true;
       }
     } catch(e) {
@@ -124,19 +124,19 @@ Element.prototype.replaceBackgroundColor = function() {
  */
 Element.prototype.replaceBorderColor = function() {
   // 四边各自计算
-  var sides = ['top', 'bottom', 'left', 'right'], side;
+  var sides = ['top', 'bottom', 'left', 'right'], i = 0, len = sides.length;
 
   var borderWidthAttrString = 'border-%s-width',
 	    borderColorAttrString = 'border-%s-color', borderColorAttr,
 	    borderWidth, borderBrightness;
 
-  for(side of sides) {
+  for( ; i < len; i++ ) {
     // 先判断下是否有边框
-    borderWidth = this.getStyle(borderWidthAttrString.replace('%s', side));
+    borderWidth = this.getStyle(borderWidthAttrString.replace('%s', sides[i]));
     if( !borderWidth ) continue;
 
     // 然后判断是否需要替换颜色
-    borderColorAttr = borderColorAttrString.replace('%s', side);
+    borderColorAttr = borderColorAttrString.replace('%s', sides[i]);
     borderBrightness = this.calcBrightness(borderColorAttr);
     if( !borderBrightness ) continue;
 
@@ -192,10 +192,10 @@ Element.prototype.replaceColor = function(processOther) {
   }
 
   // 递归
-  var children = this.childNodes, child;
-  for(child of children) {
-    if( child.nodeType == 1 ) {
-      child.replaceColor(processOther);
+  var children = this.childNodes, i = 0, len = children.length;
+  for( ; i < len; i++ ) {
+    if( children[i].nodeType == 1 ) {
+      children[i].replaceColor(processOther);
     }
   }
 }
