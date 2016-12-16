@@ -1,25 +1,17 @@
-var STYLES = new Map();
-
 // Map polyfill
 if( typeof Map != 'function' ) {
   Map = function() {};
   Map.uid = 1;
   Map.data = {}
   Map.prototype.set = function(obj, value) {
-    var uid = obj.uid;
-    if( !uid ) {
-      uid = obj.uid = ++Map.uid;
-    }
-    Map.data[uid] = value;
+    Map.data[this.uid || (this.uid = Map.uid++)] = value;
   }
   Map.prototype.get = function(obj) {
-    var uid = obj.uid;
-    if( !uid ) {
-      return false;
-    }
-    return Map.data[uid];
+    return this.uid ? Map.data[this.uid] : false;
   }
 }
+
+var STYLES = new Map();
 
 /**
  * 获取元素样式
