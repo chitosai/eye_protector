@@ -74,7 +74,7 @@ Element.prototype.calcBrightness = function(key) {
  * 
  */
 Element.prototype.hasIgnoreClass = function() {
-  var ignoreClassList = OPTIONS.ignoreClass, i = 0, len = ignoreClass.length;
+  var ignoreClassList = OPTIONS.ignoreClass, i = 0, len = ignoreClassList.length;
 
   for( ; i < len; i++ ) {
     try{
