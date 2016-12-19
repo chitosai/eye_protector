@@ -45,7 +45,7 @@ function $(id) {
   return document.getElementById(id);
 }
 function $$(selector) {
-  return document.querySelectorAll(selector);
+  return Array.prototype.slice.call(document.querySelectorAll(selector));
 }
 
 var storage = chrome.storage.sync;
@@ -84,10 +84,9 @@ function _(msg) {
 }
 function i18n() {
   // render texts
-  var nodes = $$('[data-text]'), text;
+  var nodes = $$('[data-text]');
   nodes.forEach(function(node) {
-    text = _(node.dataset.text);
-    node.innerHTML = text;
+    node.innerHTML = _(node.dataset.text);
   });
 
   // add language to body

@@ -205,8 +205,10 @@ Element.prototype.replaceColor = function(processOther) {
  * 
  */
 function restoreColor() {
-  var nodes = $$('.eye-protector-processed'), node, originalStyle, key;
-  for(node of nodes) {
+  var nodes = $$('.eye-protector-processed'), node, originalStyle, key,
+      i = 0, len = nodes.length;
+  for( ; i < len; i++ ) {
+    node = nodes[i];
     originalStyle = STYLES.get(node);
     if( !originalStyle ) continue;
 
