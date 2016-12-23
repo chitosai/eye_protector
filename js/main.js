@@ -227,38 +227,43 @@ function restoreColor() {
   }
 }
 
-function protectEye() {
-  // body需要特殊处理，当body的background-color是transparent时实际上页面是白色
-  // 此时也需要给body设置背景色
-  var body = document.body,
-      brightness = body.calcBrightness('background-color');
-  if( !brightness || brightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
-    body.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
-    body.setStyle('transition', 'background-color .3s ease');
-  }
-  // 遍历DOM替换成目标色
-  body.replaceColor();
-}
-
-function onDOMTreeModified(ev) {
-  try {
-    ev.target.replaceColor();
-  } catch(err) {
-    // 有时候e.target不是Element元素，这时候就取不到replaceColor
-    // 这样的元素目测本来就不需要处理，随他去吧
-  }
-}
+// 用mutationObserver代替监听DOMSubtreeModified事件，后者有性能缺陷：
+// https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
+var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        var nodes = Array.from(mutation.addedNodes);
+        nodes.forEach(function(node) {
+          // 文本节点内容改变也会触发mutation，而text并不是正经的node
+          if( node.nodeType == 1 ) {
+            node.replaceColor();
+          }
+        });
+      });
+    });
+var observerConfig = {
+      childList: true,
+      subtree: true
+    };
 
 function init() {
   readOption(function() {
     if( (OPTIONS.basic.mode == 'positive' && OPTIONS.positiveList.indexOf(host) == -1) ||
         (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
-      protectEye();
-      // 取消「强制替换模式」，改为自动根据页面dom变化重新执行替换
-      window.addEventListener('DOMSubtreeModified', onDOMTreeModified);
+      // body需要特殊处理，当body的background-color是transparent时实际上页面是白色
+      // 此时也需要给body设置背景色
+      var body = document.body,
+          brightness = body.calcBrightness('background-color');
+      if( !brightness || brightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
+        body.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
+        body.setStyle('transition', 'background-color .3s ease');
+      }
+      // 遍历DOM替换成目标色
+      body.replaceColor();
+      // watch dom changes
+      observer.observe(body, observerConfig);
     } else {
       restoreColor();
-      window.removeEventListener('DOMSubtreeModified', onDOMTreeModified);
+      observer.disconnect();
     }
   });
 }

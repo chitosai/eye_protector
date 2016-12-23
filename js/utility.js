@@ -45,7 +45,7 @@ function $(id) {
   return document.getElementById(id);
 }
 function $$(selector) {
-  return Array.prototype.slice.call(document.querySelectorAll(selector));
+  return Array.from(document.querySelectorAll(selector));
 }
 
 var storage = chrome.storage.sync;
