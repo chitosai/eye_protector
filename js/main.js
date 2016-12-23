@@ -173,22 +173,25 @@ Element.prototype.replaceTextColor = function() {
  * @param bool processOther 是否处理边框、文字等其他颜色，此参数继承
  *
  */
+var skipNodes = ['HTML', 'HEAD', 'BODY', 'SCRIPT', 'BR', 'CANVAS'];
 Element.prototype.replaceColor = function(processOther) {
-  // 替换背景色
-  var bgColorReplacReturn = this.replaceBackgroundColor();
-  // 根据是否替换了背景色决定是否要处理边框、文字颜色等
-  if( bgColorReplacReturn == 3 ) {
-    processOther = true;
-  } else if( bgColorReplacReturn == 2 ) {
-    processOther = false;
-  }
+  if( skipNodes.indexOf(this.nodeName) == -1 ) {
+    // 替换背景色
+    var bgColorReplacReturn = this.replaceBackgroundColor();
+    // 根据是否替换了背景色决定是否要处理边框、文字颜色等
+    if( bgColorReplacReturn == 3 ) {
+      processOther = true;
+    } else if( bgColorReplacReturn == 2 ) {
+      processOther = false;
+    }
 
-  // 是否处理子元素
-  if( processOther ) {
-    // 替换边框色
-    this.replaceBorderColor();
-    // 替换文本颜色
-    this.replaceTextColor();
+    // 是否处理子元素
+    if( processOther ) {
+      // 替换边框色
+      this.replaceBorderColor();
+      // 替换文本颜色
+      this.replaceTextColor();
+    }
   }
 
   // 递归
@@ -239,9 +242,7 @@ function protectEye() {
 
 function onDOMTreeModified(ev) {
   try {
-    var node = ev.target;
-    if( node.nodeName == 'HEAD' || node.nodeName == 'HTML' || node.nodeName == 'BODY' ) return;
-    node.replaceColor();
+    ev.target.replaceColor();
   } catch(err) {
     // 有时候e.target不是Element元素，这时候就取不到replaceColor
     // 这样的元素目测本来就不需要处理，随他去吧
