@@ -239,7 +239,9 @@ function protectEye() {
 
 function onDOMTreeModified(ev) {
   try {
-    ev.target.replaceColor();
+    var node = ev.target;
+    if( node.nodeName == 'HEAD' || node.nodeName == 'HTML' || node.nodeName == 'BODY' ) return;
+    node.replaceColor();
   } catch(err) {
     // 有时候e.target不是Element元素，这时候就取不到replaceColor
     // 这样的元素目测本来就不需要处理，随他去吧
