@@ -249,6 +249,8 @@ function init() {
   readOption(function() {
     if( (OPTIONS.basic.mode == 'positive' && OPTIONS.positiveList.indexOf(host) == -1) ||
         (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
+      // always set background to <html> element
+      document.querySelector('html').setStyle('backgroundColor', OPTIONS.basic.replaceBgWithColor);
       // body需要特殊处理，当body的background-color是transparent时实际上页面是白色
       // 此时也需要给body设置背景色
       var body = document.body,
