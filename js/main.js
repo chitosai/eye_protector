@@ -100,7 +100,14 @@ Element.prototype.hasIgnoreClass = function() {
 Element.prototype.replaceBackgroundColor = function() {
   // case.1 是input[type=text]，用户选择「不替换输入框颜色」
   // case.2 此元素包含例外class，如highlight/code等
-  if( (!OPTIONS.basic.replaceTextInput && this.nodeName == 'INPUT') || this.hasIgnoreClass() ) return 0;
+  if( (!OPTIONS.basic.replaceTextInput && this.nodeName == 'INPUT') ||
+   this.hasIgnoreClass() || 
+   // Added by scutxd on 2018/12/10
+   // case.3 youtube播放页面中，加载进度条背景色不修改，保证能看得清楚
+   // ytp-progress-list为加载进度条的className
+   this.className === 'ytp-progress-list')
+   // End by scutxd on 2018/12/10
+   return 0;
 
   // 根据亮度判断是否需要替换
   var brightness = this.calcBrightness('background-color');
