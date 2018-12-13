@@ -18,7 +18,8 @@ var OPTIONS = {
     replaceTextInput: false
   },
   // 忽略的特殊class
-  ignoreClass: ['highlight', 'syntax', 'code'],
+  // 添加youtube播放页面的加载进度条的两个控件，防止背景色被设置成同一颜色，导致看不清楚，Modified by scutxd on 2018/12/13
+  ignoreClass: ['highlight', 'syntax', 'code', 'ytp-progress-list', 'ytp-load-progress'],
   // 主动模式 - 忽略的网站列表
   positiveList: [],
   // 被动模式 - 要替换的域名列表
