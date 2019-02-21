@@ -198,7 +198,15 @@ Element.prototype.replaceColor = function(processOther) {
   var children = this.childNodes, i = 0, len = children.length;
   for( ; i < len; i++ ) {
     if( children[i].nodeType == 1 ) {
-      children[i].replaceColor(processOther);
+      if (this.className === 'bui-bar-wrap')
+      {
+        console.log('this.className = ' + this.className );
+      }      
+      //if (this.id === 'playerWrap'){
+        //continue;
+      //}else{
+        children[i].replaceColor(processOther);
+      //}      
     }
   }
 }
