@@ -198,15 +198,13 @@ Element.prototype.replaceColor = function(processOther) {
   var children = this.childNodes, i = 0, len = children.length;
   for( ; i < len; i++ ) {
     if( children[i].nodeType == 1 ) {
-      if (this.className === 'bui-bar-wrap')
-      {
-        console.log('this.className = ' + this.className );
-      }      
-      //if (this.id === 'playerWrap'){
-        //continue;
-      //}else{
+      // Modified by scutxd on 2019/02/23   
+      if (OPTIONS.VIDEONODES.indexOf(this.id) !== -1){
+        continue;
+      } else {
         children[i].replaceColor(processOther);
-      //}      
+      }
+      // End by scutxd on 2019/02/23    
     }
   }
 }
@@ -241,10 +239,10 @@ var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         var nodes = Array.from(mutation.addedNodes);
         nodes.forEach(function(node) {
-          // 文本节点内容改变也会触发mutation，而text并不是正经的node
-          if( node.nodeType == 1 ) {
-            node.replaceColor();
-          }
+          if (!isVideoNodeChild(node) && node.nodeType == 1 ){
+            // 文本节点内容改变也会触发mutation，而text并不是正经的node
+              node.replaceColor();
+          }          
         });
       });
     });
@@ -252,6 +250,19 @@ var observerConfig = {
       childList: true,
       subtree: true
     };
+
+// Added by scutxd on 2019/02/23
+function isVideoNodeChild(node) {
+  var isVideoNodeChild = false;
+  for(var i = 0; i < OPTIONS.VIDEONODES.length; i++) {
+    try {
+      return document.getElementById(OPTIONS.VIDEONODES[i]).contains(node);   
+    } catch (error) {
+      continue;
+    }    
+  }
+}
+// End by scutxd on 2019/02/23
 
 function init() {
   readOption(function() {

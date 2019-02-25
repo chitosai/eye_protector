@@ -19,6 +19,9 @@ var OPTIONS = {
   },
   // 忽略的特殊class
   ignoreClass: ['highlight', 'syntax', 'code'],
+  // Added by scutxd on 2019/02/23
+  VIDEONODES: ['movie_player', 'playerWrap', 'player'],
+  // End by scutxd on 2019/02/23
   // 主动模式 - 忽略的网站列表
   positiveList: [],
   // 被动模式 - 要替换的域名列表
