@@ -174,6 +174,10 @@ Element.prototype.replaceTextColor = function() {
  *
  */
 var skipNodes = ['HTML', 'HEAD', 'BODY', 'SCRIPT', 'BR', 'CANVAS'];
+// Added by scutxd on 2019/02/13
+var skipDivID = ['player'];
+var skipDivClass = ['player-wrap', 'player'];
+// End by scutxd on 2019/02/13
 Element.prototype.replaceColor = function(processOther) {
   if( skipNodes.indexOf(this.nodeName) == -1 ) {
     // 替换背景色
@@ -194,7 +198,6 @@ Element.prototype.replaceColor = function(processOther) {
     }
   }
 
-  // 递归
   var children = this.childNodes, i = 0, len = children.length;
   for( ; i < len; i++ ) {
     if( children[i].nodeType == 1 ) {
@@ -207,6 +210,7 @@ Element.prototype.replaceColor = function(processOther) {
       // End by scutxd on 2019/02/23
     }
   }
+  // End by scutxd on 2019/02/13
 }
 
 /**
