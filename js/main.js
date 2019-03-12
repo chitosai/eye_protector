@@ -198,13 +198,13 @@ Element.prototype.replaceColor = function(processOther) {
   var children = this.childNodes, i = 0, len = children.length;
   for( ; i < len; i++ ) {
     if( children[i].nodeType == 1 ) {
-      // Modified by scutxd on 2019/02/23   
-      if (OPTIONS.VIDEONODES.indexOf(this.id) !== -1){
-        continue;
+      // Modified by scutxd on 2019/02/23
+      if (OPTIONS.VIDEONODES.indexOf(this.id) !== -1) {
+        continue
       } else {
-        children[i].replaceColor(processOther);
+        children[i].replaceColor(processOther)
       }
-      // End by scutxd on 2019/02/23    
+      // End by scutxd on 2019/02/23
     }
   }
 }
@@ -252,14 +252,13 @@ var observerConfig = {
     };
 
 // Added by scutxd on 2019/02/23
-function isVideoNodeChild(node) {
-  var isVideoNodeChild = false;
-  for(var i = 0; i < OPTIONS.VIDEONODES.length; i++) {
+function isVideoNodeChild (node) {
+  for (var i = 0; i < OPTIONS.VIDEONODES.length; i++) {
     try {
-      return document.getElementById(OPTIONS.VIDEONODES[i]).contains(node);   
+      return document.getElementById(OPTIONS.VIDEONODES[i]).contains(node)   
     } catch (error) {
-      continue;
-    }    
+      continue
+    }
   }
 }
 // End by scutxd on 2019/02/23
