@@ -52,6 +52,16 @@ body {
 .about{
   color: #aaa;
 }
+.donate-icon{
+  display: none;
+  width: 100%;
+}
+[lang="cn"] .zfb{
+  display: block;
+}
+[lang="en"] .paypal{
+  display: block;
+}
 
 #color-preview{
   border-radius: 3px;
