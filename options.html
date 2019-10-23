@@ -38,6 +38,13 @@
 			<button id="color-save" data-text="strSave">保存</button>
 			<button id="color-restore" data-text="strRestore">还原为豆沙绿</button>
 		</div>
+		<div class="title" data-text="strBrightnessThreshold">亮度阈值</div>
+		<div class="brightness">
+			<p data-text="strBrightnessThresholdTip1">设置一个适合你的亮度阈值</p>
+			<p data-text="strBrightnessThresholdTip2" style="color: #aaa; margin: -15px 0 15px;">（一般来说直接用默认值就可以了）</p>
+			<input id="brightness" type="range" min="0" max="0.99" step="0.01">
+			<span id="current-brightness"></span>
+		</div>
 		<p id="color-save-success" data-text="strSaveSuccess">保存成功</p>
 	</div>
 	<!-- end -->

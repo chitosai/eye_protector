@@ -65,5 +65,14 @@
 	},
 	"strDonate": {
 		"message": "Much appreciate if you'd like to buy me a cup of cola :)"
+	},
+	"strBrightnessThreshold": {
+		"message": "Brightness Thershold"
+	},
+	"strBrightnessThresholdTip1": {
+		"message": "Pick a brightness threshold that fits to you"
+	},
+	"strBrightnessThresholdTip2": {
+		"message": "(For most people you don't need to modify it)"
 	}
 }

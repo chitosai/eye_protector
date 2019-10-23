@@ -65,5 +65,14 @@
 	},
 	"strDonate": {
 		"message": "如果你愿意赞助我一杯可乐就太感谢了：）"
+	},
+	"strBrightnessThreshold": {
+		"message": "亮度阈值"
+	},
+	"strBrightnessThresholdTip1": {
+		"message": "设置一个适合你的亮度阈值"
+	},
+	"strBrightnessThresholdTip2": {
+		"message": "（一般来说直接用默认值就可以了）"
 	}
 }

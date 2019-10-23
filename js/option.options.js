@@ -58,6 +58,15 @@ var CLICKLISTENERS = {
   }
 }
 
+function onRangeInput(e) {
+  $('current-brightness').textContent = this.value;
+}
+
+function onRangeChange(e) {
+  OPTIONS.basic.bgColorBrightnessThreshold = this.value;
+  saveOption();
+}
+
 function init() {
   // i18n
   i18n();
@@ -81,6 +90,9 @@ function init() {
     // 背景色
     $('color-preview').style.backgroundColor = OPTIONS.basic.replaceBgWithColor;
     $('color').value = OPTIONS.basic.replaceBgWithColor.slice(1);
+
+    // 亮度阈值
+    $('brightness').value = OPTIONS.basic.bgColorBrightnessThreshold;
   });
 
   // 修改设置
@@ -93,6 +105,10 @@ function init() {
   $('color').addEventListener('input', CLICKLISTENERS.pickColor);
   $('color-save').addEventListener('click', CLICKLISTENERS.saveColor);
   $('color-restore').addEventListener('click', CLICKLISTENERS.restoreColor);
+
+  // 亮度阈值
+  $('brightness').addEventListener('input', onRangeInput);
+  $('brightness').addEventListener('change', onRangeChange);
 
   // options页面在打开的情况下，如果用户切到其他tabs修改了OPTIONS，这边需要及时更新
   // 不然可能出现options页面打开太久，OPTIONS中的list已经不是最新的，然后options触发了一次saveOptions造成
