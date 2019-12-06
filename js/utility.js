@@ -99,3 +99,22 @@ function i18n() {
   // add language to body
   document.body.setAttribute('lang', chrome.i18n.getUILanguage());
 }
+
+// benchmark
+class Benchmark {
+  constructor() {
+    this.start = new Date();
+    this.end = null;
+    this.ticker = null;
+  }
+  tick() {
+    this.end = new Date();
+    clearTimeout(this.ticker);
+    this.ticker = setTimeout(() => {
+      const elapsed = (this.end - this.start)/1000;
+      console.log(`[Eyeprotector] Runs for ${elapsed.toFixed(2)}s`);
+      // 只记录初始化那波就够了
+      this.tick = () => {};
+    }, 999);
+  }
+}

@@ -215,6 +215,7 @@ Element.prototype.replaceColor = function(processOther = false, isMutation = fal
       children[i].replaceColor(processOther);
     }
   }
+  benchmark.tick();
 }
 
 /**
@@ -286,6 +287,8 @@ function init() {
   });
 }
 
+// benchmark
+const benchmark = new Benchmark();
 // 保存域名
 var host = getHost(document.location.href);
 // 设置改变时重新读取设置
