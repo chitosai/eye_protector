@@ -18,7 +18,7 @@ var OPTIONS = {
     replaceTextInput: false
   },
   // 忽略的特殊class
-  ignoreClass: ['highlight', 'syntax', 'code'],
+  ignoreClass: ['highlight', 'syntax', 'code', 'player'],
   // 主动模式 - 忽略的网站列表
   positiveList: [],
   // 被动模式 - 要替换的域名列表
@@ -55,6 +55,13 @@ function readOption(callback) {
     if( obj.option && obj.option.basic ) {
       OPTIONS = obj['option'];
     }
+    // 惊了，没考虑到会修改默认配置的问题。。
+    // 先这么凑活一下吧
+    if( !OPTIONS.ignoreClass.includes('player') ) {
+      OPTIONS.ignoreClass.push('player');
+      saveOption();
+    }
+    // 
     callback && typeof callback == 'function' && callback();
   });
 }

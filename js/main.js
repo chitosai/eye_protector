@@ -73,17 +73,17 @@ Element.prototype.calcBrightness = function(key) {
  * @return false 不包含
  * 
  */
-Element.prototype.hasIgnoreClass = function() {
-  var ignoreClassList = OPTIONS.ignoreClass, i = 0, len = ignoreClassList.length;
-
-  for( ; i < len; i++ ) {
-    try{
-      if( this.className.indexOf(ignoreClassList[i]) > -1 ) {
-        return true;
-      }
-    } catch(e) {
-      // 当前元素没有className可能是遇到svg了，姑且不替换吧
-      // 栗子：google
+const skipNodes = ['SCRIPT', 'BR', 'CANVAS', 'IMG', 'svg'];
+Element.prototype.shouldBeIgnored = function() {
+  if( skipNodes.indexOf(this.nodeName) > -1 ) {
+    return true;
+  }
+  const ignoreClassList = OPTIONS.ignoreClass, len = ignoreClassList.length;
+  const _class = this.getAttribute('class');
+  const _id = this.id;
+  for( let i = 0; i < len; i++ ) {
+    if( ( _class && _class.toLowerCase().indexOf(ignoreClassList[i]) > -1 ) || 
+        ( _id && _id.toLowerCase().indexOf(ignoreClassList[i]) > -1 ) ) {
       return true;
     }
   }
@@ -98,9 +98,10 @@ Element.prototype.hasIgnoreClass = function() {
  * @return 0 此元素依照config中的设置跳过不处理
  */
 Element.prototype.replaceBackgroundColor = function() {
-  // case.1 是input[type=text]，用户选择「不替换输入框颜色」
-  // case.2 此元素包含例外class，如highlight/code等
-  if( (!OPTIONS.basic.replaceTextInput && this.nodeName == 'INPUT') || this.hasIgnoreClass() ) return 0;
+  // input[type=text]，用户选择「不替换输入框颜色」
+  if( this.nodeName == 'INPUT' && !OPTIONS.basic.replaceTextInput ) {
+    return 0;
+  }
 
   // 根据亮度判断是否需要替换
   var brightness = this.calcBrightness('background-color');
@@ -173,25 +174,38 @@ Element.prototype.replaceTextColor = function() {
  * @param bool processOther 是否处理边框、文字等其他颜色，此参数继承
  *
  */
-var skipNodes = ['HTML', 'HEAD', 'BODY', 'SCRIPT', 'BR', 'CANVAS'];
-Element.prototype.replaceColor = function(processOther) {
-  if( skipNodes.indexOf(this.nodeName) == -1 ) {
-    // 替换背景色
-    var bgColorReplacReturn = this.replaceBackgroundColor();
-    // 根据是否替换了背景色决定是否要处理边框、文字颜色等
-    if( bgColorReplacReturn == 3 ) {
-      processOther = true;
-    } else if( bgColorReplacReturn == 2 ) {
-      processOther = false;
+Element.prototype.replaceColor = function(processOther = false, isMutation = false) {
+  // 包含highlight/player等特征的节点应当直接跳过，其子节点也不必再遍历
+  if( this.shouldBeIgnored() ) {
+    return;
+  }
+  // 当 isMutation = true 时，说明这次遍历不是从 body 自上而下触发的
+  // 我们要先向上遍历一遍祖先，确认是不是应该处理当前节点
+  if( isMutation ) {
+    let ancestor = this;
+    while( (ancestor = ancestor.parentNode) && ancestor.nodeName != 'BODY' ) {
+      if( ancestor.shouldBeIgnored() ) {
+        return;
+      }
     }
+  }
 
-    // 是否处理子元素
-    if( processOther ) {
-      // 替换边框色
-      this.replaceBorderColor();
-      // 替换文本颜色
-      this.replaceTextColor();
-    }
+  // 替换背景色
+  var bgColorReplacReturn = this.replaceBackgroundColor();
+  // 根据是否替换了背景色决定是否要处理边框、文字颜色等
+  // 当返回值为2、3时说明当前节点是有背景色的，应当根据当前节点的情况修改processOther
+  // 其他情况继续沿用父节点传下来的值
+  if( bgColorReplacReturn == 3 ) {
+    processOther = true;
+  } else if( bgColorReplacReturn == 2 ) {
+    processOther = false;
+  }
+
+  if( processOther ) {
+    // 替换边框色
+    this.replaceBorderColor();
+    // 替换文本颜色
+    this.replaceTextColor();
   }
 
   // 递归
@@ -235,7 +249,7 @@ var observer = new MutationObserver(function(mutations) {
         nodes.forEach(function(node) {
           // 文本节点内容改变也会触发mutation，而text并不是正经的node
           if( node.nodeType == 1 ) {
-            node.replaceColor();
+            node.replaceColor(false, true);
           }
         });
       });
@@ -251,7 +265,7 @@ function init() {
         (OPTIONS.basic.mode == 'passive' && OPTIONS.passiveList.indexOf(host) > -1) ) {
       // always set background to <html> element
       document.querySelector('html').setStyle('backgroundColor', OPTIONS.basic.replaceBgWithColor);
-      // body需要特殊处理，当body的background-color是transparent时实际上页面是白色
+      // body需要特殊处理，当body的background-color为transparent时实际上页面是白色
       // 此时也需要给body设置背景色
       var body = document.body,
           brightness = body.calcBrightness('background-color');
@@ -259,8 +273,10 @@ function init() {
         body.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
         body.setStyle('transition', 'background-color .3s ease');
       }
-      // 遍历DOM替换成目标色
-      body.replaceColor();
+      // 遍历DOM
+      Array.from(body.children).forEach((node) => {
+        node.replaceColor();
+      });
       // watch dom changes
       observer.observe(body, observerConfig);
     } else {
