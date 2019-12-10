@@ -34,7 +34,7 @@ function init() {
 
       // 显示当前模式
       $('mode').textContent = ( mode == 'positive' ? _('strPositive') : _('strPassive') );
-      $('mode').href = 'chrome-extension://' + chrome.app.getDetails().id + '/options.html';
+      $('mode').href = chrome.runtime.getURL('/options.html');
 
       // 根据运行模式产生按钮状态
       btn.style.display = 'block';
