@@ -174,20 +174,10 @@ Element.prototype.replaceTextColor = function() {
  * @param bool processOther 是否处理边框、文字等其他颜色，此参数继承
  *
  */
-Element.prototype.replaceColor = function(processOther = false, isMutation = false) {
+Element.prototype.replaceColor = function(processOther = false) {
   // 包含highlight/player等特征的节点应当直接跳过，其子节点也不必再遍历
   if( this.shouldBeIgnored() ) {
     return;
-  }
-  // 当 isMutation = true 时，说明这次遍历不是从 body 自上而下触发的
-  // 我们要先向上遍历一遍祖先，确认是不是应该处理当前节点
-  if( isMutation ) {
-    let ancestor = this;
-    while( (ancestor = ancestor.parentNode) && ancestor.nodeName != 'BODY' ) {
-      if( ancestor.shouldBeIgnored() ) {
-        return;
-      }
-    }
   }
 
   // 替换背景色
@@ -246,13 +236,22 @@ function restoreColor() {
 // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
 var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        var nodes = Array.from(mutation.addedNodes);
-        nodes.forEach(function(node) {
-          // 文本节点内容改变也会触发mutation，而text并不是正经的node
-          if( node.nodeType == 1 ) {
-            node.replaceColor(false, true);
+        const len = mutation.addedNodes.length;
+        for( let i = 0; i < len; i++ ) {
+          const node = mutation.addedNodes[i];
+          // 先向上遍历一遍祖先，确认是否需要处理当前节点
+          let ancestor = node, shouldIgnore = false;
+          while( (ancestor = ancestor.parentNode) && ancestor.nodeName != 'BODY' ) {
+            if( ancestor.shouldBeIgnored() ) {
+              shouldIgnore = true;
+              break;
+            }
           }
-        });
+          // 文本节点内容改变也会触发mutation，而text并不是正经的node
+          if( !shouldIgnore && node.nodeType == 1 ) {
+            node.replaceColor();
+          }
+        }
       });
     });
 var observerConfig = {
