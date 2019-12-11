@@ -23,8 +23,16 @@
     },
     "default_title": "设置设置",
     "default_popup": "popup.html"
-   },
-  "options_page": "options.html",
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "eye_protector@chitosai.org",
+      "strict_min_version": "68.0"
+    }
+  },
+  "options_ui": {
+    "page": "options.html"
+  },
   "content_scripts":[{
   	"matches":[
   		"http://*/*",
