@@ -18,7 +18,7 @@ var OPTIONS = {
     replaceTextInput: false
   },
   // 忽略的特殊class
-  ignoreClass: ['highlight', 'syntax', 'code'],
+  ignoreClass: ['highlight', 'syntax', 'code', 'player'],
   // 主动模式 - 忽略的网站列表
   positiveList: [],
   // 被动模式 - 要替换的域名列表
@@ -55,6 +55,13 @@ function readOption(callback) {
     if( obj.option && obj.option.basic ) {
       OPTIONS = obj['option'];
     }
+    // 惊了，没考虑到会修改默认配置的问题。。
+    // 先这么凑活一下吧
+    if( !OPTIONS.ignoreClass.includes('player') ) {
+      OPTIONS.ignoreClass.push('player');
+      saveOption();
+    }
+    // 
     callback && typeof callback == 'function' && callback();
   });
 }
@@ -91,4 +98,23 @@ function i18n() {
 
   // add language to body
   document.body.setAttribute('lang', chrome.i18n.getUILanguage());
+}
+
+// benchmark
+class Benchmark {
+  constructor() {
+    this.start = new Date();
+    this.end = null;
+    this.ticker = null;
+  }
+  tick() {
+    this.end = new Date();
+    clearTimeout(this.ticker);
+    this.ticker = setTimeout(() => {
+      const elapsed = (this.end - this.start)/1000;
+      console.log(`[Eyeprotector] Runs for ${elapsed.toFixed(2)}s`);
+      // 只记录初始化那波就够了
+      this.tick = () => {};
+    }, 999);
+  }
 }
