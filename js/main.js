@@ -76,15 +76,15 @@ Element.prototype.calcBrightness = function(key) {
  * @return false 不包含
  * 
  */
-const skipNodes = ['SCRIPT', 'BR', 'CANVAS', 'IMG', 'svg'];
+var skipNodes = ['SCRIPT', 'BR', 'CANVAS', 'IMG', 'svg'];
 Element.prototype.shouldBeIgnored = function() {
   if( skipNodes.indexOf(this.nodeName) > -1 ) {
     return true;
   }
-  const ignoreClassList = OPTIONS.ignoreClass, len = ignoreClassList.length;
-  const _class = this.getAttribute('class');
-  const _id = this.id;
-  for( let i = 0; i < len; i++ ) {
+  var ignoreClassList = OPTIONS.ignoreClass, len = ignoreClassList.length;
+  var _class = this.getAttribute('class');
+  var _id = this.id;
+  for( var i = 0; i < len; i++ ) {
     if( ( _class && _class.toLowerCase().indexOf(ignoreClassList[i]) > -1 ) || 
         ( _id && _id.toLowerCase().indexOf(ignoreClassList[i]) > -1 ) ) {
       return true;
@@ -246,11 +246,11 @@ function restoreColor() {
 // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
 var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        const len = mutation.addedNodes.length;
-        for( let i = 0; i < len; i++ ) {
-          const node = mutation.addedNodes[i];
+        var len = mutation.addedNodes.length;
+        for( var i = 0; i < len; i++ ) {
+          var node = mutation.addedNodes[i];
           // 先向上遍历一遍祖先，确认是否需要处理当前节点
-          let ancestor = node, shouldIgnore = false;
+          var ancestor = node, shouldIgnore = false;
           while( (ancestor = ancestor.parentNode) && ancestor.nodeName != 'BODY' ) {
             if( ancestor.shouldBeIgnored() ) {
               shouldIgnore = true;
@@ -297,7 +297,7 @@ function init() {
 }
 
 // benchmark
-const benchmark = new Benchmark();
+var benchmark = new Benchmark();
 // 保存域名
 var host = getHost(document.location.href);
 // 设置改变时重新读取设置
