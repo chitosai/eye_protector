@@ -54,17 +54,20 @@ var parseRGBA = function(str) {
  * 计算亮度
  *
  */
-Element.prototype.calcBrightness = function(key) {
-  // 读取颜色数据
-  var bgcolor = this.getStyle(key);
-  if( !bgcolor ) return false;
-
-  var rgba = parseRGBA(bgcolor);
+function _calcBrightness(bgColor) {
+  var rgba = parseRGBA(bgColor);
   // alpha通道为0是transparent
   if( !rgba[3] ) return false;
 
   // 把RGB转换为亮度
   return .2126 * rgba[0] / 255 + .7152 * rgba[1] / 255 + .072 * rgba[2] / 255;
+}
+Element.prototype.calcBrightness = function(key) {
+  // 读取颜色数据
+  var bgColor = this.getStyle(key);
+  if( !bgColor ) return false;
+
+  return _calcBrightness(bgColor);
 }
 
 /**
@@ -144,6 +147,13 @@ Element.prototype.replaceBorderColor = function() {
     if( borderBrightness > OPTIONS.basic.borderColorBrightnessThreshold ) {
       this.setStyle(borderColorAttr, OPTIONS.basic.replaceBorderWithColor);
     }
+  }
+
+  // box-shadow，如果有位移和扩散都为0的box-shadow，我们就认为这个box-shadow是border
+  var shadow = this.getStyle('box-shadow');
+  var m = /(rgb\(\d+, \d+, \d+\)) 0px 0px 0px (\d+)px/.exec(shadow);
+  if( m && _calcBrightness(m[1]) ) {
+    this.setStyle('box-shadow', `${OPTIONS.basic.replaceBorderWithColor} 0px 0px 0px ${m[2]}px`);
   }
 }
 
