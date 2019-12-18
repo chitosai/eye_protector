@@ -11,7 +11,7 @@ if( typeof Map != 'function' ) {
   }
 }
 
-var STYLES = new Map();
+const STYLES = new Map();
 
 /**
  * 获取元素样式
@@ -23,8 +23,8 @@ Element.prototype.getStyle = function(key) {
 // 设置元素样式，同时缓存它原有的样式
 Element.prototype.setStyle = function(key, val) {
   // 获取原始样式
-  var originStyle = this.getStyle(key),
-	    styleCache = STYLES.get(this);
+  const originStyle = this.getStyle(key);
+	let styleCache = STYLES.get(this);
 
   // 带上class注明这个dom是被修改过样式的
   if( !styleCache ) {
@@ -45,8 +45,8 @@ Element.prototype.setStyle = function(key, val) {
  * 获取rgba数组
  *
  */
-var parseRGBA = function(str) {
-  var rgba = str.match(/[\d\.]+/g);
+const parseRGBA = function(str) {
+  const rgba = str.match(/[\d\.]+/g);
   return [Number(rgba[0]), Number(rgba[1]), Number(rgba[2]), rgba.length == 4 ? Number(rgba[3]) : 1];
 }
 
@@ -56,10 +56,10 @@ var parseRGBA = function(str) {
  */
 Element.prototype.calcBrightness = function(key) {
   // 读取颜色数据
-  var bgcolor = this.getStyle(key);
+  const bgcolor = this.getStyle(key);
   if( !bgcolor ) return false;
 
-  var rgba = parseRGBA(bgcolor);
+  const rgba = parseRGBA(bgcolor);
   // alpha通道为0是transparent
   if( !rgba[3] ) return false;
 
@@ -68,9 +68,9 @@ Element.prototype.calcBrightness = function(key) {
 }
 
 /**
- * 根据预设的class列表跳过特定div，直接用IndexOf是因为这样highlight/highlight/highlighter之类的不用重复了
- * @return true dom中包含需要跳过的class
- * @return false 不包含
+ * 判断是否需要处理这个节点，直接用IndexOf是因为这样highlight/highlight/highlighter之类的不用重复了
+ * @return true 跳过
+ * @return false 不跳过
  * 
  */
 const skipNodes = ['SCRIPT', 'BR', 'CANVAS', 'IMG', 'svg'];
@@ -104,14 +104,13 @@ Element.prototype.replaceBackgroundColor = function() {
   }
 
   // 根据亮度判断是否需要替换
-  var brightness = this.calcBrightness('background-color');
+  const brightness = this.calcBrightness('background-color');
   if( brightness === false ) return 1;
 
   if( brightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
-    var self = this;
-    self.setStyle('transition', 'background-color .3s ease');
-    setTimeout(function() {
-      self.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
+    this.setStyle('transition', 'background-color .3s ease');
+    setTimeout(() => {
+      this.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
     }, 0);
     return 3;
   } else {
@@ -125,20 +124,18 @@ Element.prototype.replaceBackgroundColor = function() {
  */
 Element.prototype.replaceBorderColor = function() {
   // 四边各自计算
-  var sides = ['top', 'bottom', 'left', 'right'], i = 0, len = sides.length;
+  const sides = ['top', 'bottom', 'left', 'right'], len = sides.length;
+  const borderWidthAttrString = 'border-%s-width',
+        borderColorAttrString = 'border-%s-color';
 
-  var borderWidthAttrString = 'border-%s-width',
-	    borderColorAttrString = 'border-%s-color', borderColorAttr,
-	    borderWidth, borderBrightness;
-
-  for( ; i < len; i++ ) {
+  for( let i = 0; i < len; i++ ) {
     // 先判断下是否有边框
-    borderWidth = this.getStyle(borderWidthAttrString.replace('%s', sides[i]));
+    let borderWidth = this.getStyle(borderWidthAttrString.replace('%s', sides[i]));
     if( !borderWidth ) continue;
 
     // 然后判断是否需要替换颜色
-    borderColorAttr = borderColorAttrString.replace('%s', sides[i]);
-    borderBrightness = this.calcBrightness(borderColorAttr);
+    let borderColorAttr = borderColorAttrString.replace('%s', sides[i]);
+    let borderBrightness = this.calcBrightness(borderColorAttr);
     if( !borderBrightness ) continue;
 
     if( borderBrightness > OPTIONS.basic.borderColorBrightnessThreshold ) {
@@ -155,18 +152,16 @@ Element.prototype.replaceTextColor = function() {
   if( !OPTIONS.basic.replaceTextColor ) return false;
 
   // 文字亮度
-  var brightness = this.calcBrightness('color'), color;
+  const brightness = this.calcBrightness('color');
   if( !brightness ) return false;
 
   // 确认此元素亮度过高且没有背景图片
-  var bgImage = this.getStyle('background-image');
+  const bgImage = this.getStyle('background-image');
   if( brightness > OPTIONS.basic.borderColorBrightnessThreshold &&
-    (!bgImage || bgImage == 'none') ) {
+    ( !bgImage || bgImage == 'none' ) ) {
     // 替换文字颜色
     this.setStyle('color', '#000');
   }
-
-  // TODO: 有时候虽然当前元素没有背景图片，但其实文字浮动在父元素或其他元素的背景图片上，造成文字看不清
 }
 
 /**
@@ -181,7 +176,7 @@ Element.prototype.replaceColor = function(processOther = false) {
   }
 
   // 替换背景色
-  var bgColorReplacReturn = this.replaceBackgroundColor();
+  const bgColorReplacReturn = this.replaceBackgroundColor();
   // 根据是否替换了背景色决定是否要处理边框、文字颜色等
   // 当返回值为2、3时说明当前节点是有背景色的，应当根据当前节点的情况修改processOther
   // 其他情况继续沿用父节点传下来的值
@@ -199,8 +194,8 @@ Element.prototype.replaceColor = function(processOther = false) {
   }
 
   // 递归
-  var children = this.childNodes, i = 0, len = children.length;
-  for( ; i < len; i++ ) {
+  const children = this.childNodes, len = children.length;
+  for( let i = 0; i < len; i++ ) {
     if( children[i].nodeType == 1 ) {
       children[i].replaceColor(processOther);
     }
@@ -209,18 +204,17 @@ Element.prototype.replaceColor = function(processOther = false) {
 }
 
 /**
- * 回复页面原始样式
+ * 恢复页面原始样式
  * 
  */
 function restoreColor() {
-  var nodes = $$('.eye-protector-processed'), node, originalStyle, key,
-      i = 0, len = nodes.length;
-  for( ; i < len; i++ ) {
-    node = nodes[i];
-    originalStyle = STYLES.get(node);
+  const nodes = $$('.eye-protector-processed'), len = nodes.length;
+  for( let i = 0; i < len; i++ ) {
+    let node = nodes[i];
+    let originalStyle = STYLES.get(node);
     if( !originalStyle ) continue;
 
-    for(key in originalStyle) {
+    for( let key in originalStyle ) {
       if( key == 'transition' ) {
         setTimeout(function() {
           node.style.transition = originalStyle.transition;
@@ -234,7 +228,7 @@ function restoreColor() {
 
 // 用mutationObserver代替监听DOMSubtreeModified事件，后者有性能缺陷：
 // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
-var observer = new MutationObserver(function(mutations) {
+const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         const len = mutation.addedNodes.length;
         for( let i = 0; i < len; i++ ) {
@@ -254,10 +248,10 @@ var observer = new MutationObserver(function(mutations) {
         }
       });
     });
-var observerConfig = {
-      childList: true,
-      subtree: true
-    };
+const observerConfig = {
+  childList: true,
+  subtree: true
+};
 
 function init() {
   readOption(function() {
@@ -267,7 +261,7 @@ function init() {
       document.querySelector('html').setStyle('backgroundColor', OPTIONS.basic.replaceBgWithColor);
       // body需要特殊处理，当body的background-color为transparent时实际上页面是白色
       // 此时也需要给body设置背景色
-      var body = document.body,
+      const body = document.body,
           brightness = body.calcBrightness('background-color');
       if( !brightness || brightness > OPTIONS.basic.bgColorBrightnessThreshold ) {
         body.setStyle('background-color', OPTIONS.basic.replaceBgWithColor);
@@ -275,7 +269,7 @@ function init() {
       }
       // 遍历DOM
       Array.from(body.children).forEach((node) => {
-        node.replaceColor();
+        node.replaceColor(false);
       });
       // watch dom changes
       observer.observe(body, observerConfig);
