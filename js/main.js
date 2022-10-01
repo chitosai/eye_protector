@@ -32,7 +32,9 @@ const setStyle = (node, key, val) => {
     STYLES.set(node, styleCache);
   }
 
-  node.style[key] = val;
+  setTimeout(() => {
+    node.style[key] = val;
+  }, 0);
 };
 
 /**
@@ -105,8 +107,7 @@ const replaceBackgroundColor = (node) => {
   if (!brightness) return 1;
 
   if (brightness > OPTIONS.basic.bgColorBrightnessThreshold) {
-    setStyle(node, "transition", "background-color .3s ease");
-    setTimeout(() => setStyle(node, "background-color", OPTIONS.basic.replaceBgWithColor), 0);
+    setStyle(node, "background-color", OPTIONS.basic.replaceBgWithColor);
     return 3;
   } else {
     return 2;
