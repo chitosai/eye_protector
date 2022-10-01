@@ -5,8 +5,6 @@
 	"extDescription": {
 		"message": "阿姆斯特朗回旋喷气式阿姆斯特朗墨镜"
 	},
-
-	// popup.html
 	"strProtocolMsg": {
 		"message": "此插件仅在 http/https 协议的域名下生效。"
 	},
@@ -25,8 +23,6 @@
 	"strCurrentMode": {
 		"message": "正在<a href='' target='_blank' id='mode'></a>下运行"
 	},
-
-	// options.html
 	"strAbout": {
 		"message": "关于"
 	},

@@ -5,8 +5,6 @@
 	"extDescription": {
 		"message": "May it be the best eye-protect extension on earth."
 	},
-
-	// popup.html
 	"strProtocolMsg": {
 		"message": "The extension only works under http/https url."
 	},
@@ -25,22 +23,20 @@
 	"strCurrentMode": {
 		"message": "Running in <a href='' target='_blank' id='mode'></a>"
 	},
-
-	// options.html
 	"strAbout": {
 		"message": "About"
 	},
 	"strRepository": {
-		"message": "· Source code on <a href='https://github.com/chitosai/eye_protector' target='_blank'>Github</a>. If you like the extension, please give me a star, thanks ：）"
+		"message": "· Source code on <a href='https://github.com/chitosai/eye_protector' target='_blank'>Github</a>. If you like the extension, please give me a star, thanks :)"
 	},
 	"strMode": {
 		"message": "Mode"
 	},
 	"strPositiveModeDesc": {
-		"message": "Positive<p class='desc'><b>Replace</b> background color for all domains，you can disable eye-protect for particular domains.</p>"
+		"message": "Positive<p class='desc'><b>Replace</b> background color for all domains, you can disable eye-protect for particular domains.</p>"
 	},
 	"strPassiveModeDesc": {
-		"message": "Passive<p class='desc'><b>Not replace</b> background color by default，you can enable eye-protect for particular domains mamually.</p>"
+		"message": "Passive<p class='desc'><b>Not replace</b> background color by default, you can enable eye-protect for particular domains mamually.</p>"
 	},
 	"strGlobalSetting": {
 		"message": "Global Settings"
