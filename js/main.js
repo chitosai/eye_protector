@@ -1,17 +1,4 @@
-// Map polyfill
-if (typeof Map != "function") {
-  Map = function () {};
-  Map.uid = 1;
-  Map.prototype.data = {};
-  Map.prototype.set = function (obj, value) {
-    this.data[obj.uid || (obj.uid = Map.uid++)] = value;
-  };
-  Map.prototype.get = function (obj) {
-    return obj.uid ? this.data[obj.uid] : false;
-  };
-}
-
-var STYLES = new Map();
+var CACHED_STYLES = new Map();
 
 /**
  * 获取元素样式
@@ -24,14 +11,18 @@ const getStyle = (node, key) => {
 const setStyle = (node, key, val) => {
   // 获取原始样式
   const originStyle = getStyle(node, key),
-    styleCache = STYLES.get(node) || {};
+    styleCache = CACHED_STYLES.get(node) || {};
 
-  // 新增样式
+  // 把原始样式保存下来
   if (!styleCache[key]) {
-    styleCache[key] = originStyle;
-    STYLES.set(node, styleCache);
+    CACHED_STYLES.set(node, {
+      ...styleCache,
+      [key]: originStyle,
+    });
   }
 
+  // 修改为新样式，以前这里可以直接同步改，但react流行之后似乎有些使用react的页面我们直接修改会造成react报错，例如知乎
+  // 试了一下解决方式就是我们把样式修改改为异步进行，让react先完成她的执行周期就不会有冲突了
   setTimeout(() => {
     node.style[key] = val;
   }, 0);
@@ -41,8 +32,8 @@ const setStyle = (node, key, val) => {
  * 获取rgba数组
  *
  */
-var parseRGBA = function (str) {
-  var rgba = str.match(/[\d\.]+/g);
+const parseRGBA = (str) => {
+  const rgba = str.match(/[\d\.]+/g);
   return [Number(rgba[0]), Number(rgba[1]), Number(rgba[2]), rgba.length == 4 ? Number(rgba[3]) : 1];
 };
 
@@ -50,20 +41,18 @@ var parseRGBA = function (str) {
  * 计算亮度
  *
  */
-function _calcBrightness(bgColor) {
-  var rgba = parseRGBA(bgColor);
+const calcBrightness = (colorString) => {
+  const rgba = parseRGBA(colorString);
   // alpha通道为0是transparent
   if (!rgba[3]) return false;
 
   // 把RGB转换为亮度
   return (0.2126 * rgba[0]) / 255 + (0.7152 * rgba[1]) / 255 + (0.072 * rgba[2]) / 255;
-}
-Element.prototype.calcBrightness = function (key) {
+};
+const getNodeStyleBrightness = (node, key) => {
   // 读取颜色数据
-  var bgColor = getStyle(this, key);
-  if (!bgColor) return false;
-
-  return _calcBrightness(bgColor);
+  const colorString = getStyle(node, key);
+  return colorString ? calcBrightness(colorString) : false;
 };
 
 /**
@@ -72,17 +61,17 @@ Element.prototype.calcBrightness = function (key) {
  * @return false 不包含
  *
  */
-var skipNodes = ["SCRIPT", "BR", "CANVAS", "IMG", "svg"];
-Element.prototype.shouldBeIgnored = function () {
-  if (skipNodes.indexOf(this.nodeName) > -1) {
+const shouldBeIgnored = (node) => {
+  if (OPTIONS.skipNodeTypes.includes(node.nodeName)) {
     return true;
   }
-  var ignoreClassList = OPTIONS.ignoreClass,
-    len = ignoreClassList.length;
-  var _class = this.getAttribute("class");
-  var _id = this.id;
-  for (var i = 0; i < len; i++) {
-    if ((_class && _class.toLowerCase().indexOf(ignoreClassList[i]) > -1) || (_id && _id.toLowerCase().indexOf(ignoreClassList[i]) > -1)) {
+  const classnames = node.getAttribute("class")?.toLowerCase() || "";
+  const _id = node.id?.toLowerCase() || "";
+  if (!classnames && !_id) {
+    return false;
+  }
+  for (const ic of OPTIONS.ignoreClass) {
+    if (classnames.includes(ic) || _id.includes(ic)) {
       return true;
     }
   }
@@ -103,7 +92,7 @@ const replaceBackgroundColor = (node) => {
   }
 
   // 根据亮度判断是否需要替换
-  const brightness = node.calcBrightness("background-color");
+  const brightness = getNodeStyleBrightness(node, "background-color");
   if (!brightness) return 1;
 
   if (brightness > OPTIONS.basic.bgColorBrightnessThreshold) {
@@ -118,38 +107,34 @@ const replaceBackgroundColor = (node) => {
  * 修改Border颜色
  *
  */
-Element.prototype.replaceBorderColor = function () {
+const replaceBorderColor = (node) => {
   // 四边各自计算
-  var sides = ["top", "bottom", "left", "right"],
-    i = 0,
-    len = sides.length;
+  const sides = ["top", "bottom", "left", "right"];
 
-  var borderWidthAttrString = "border-%s-width",
-    borderColorAttrString = "border-%s-color",
-    borderColorAttr,
-    borderWidth,
-    borderBrightness;
+  const borderWidthAttrString = "border-%s-width",
+    borderColorAttrString = "border-%s-color";
+  let borderColorAttr, borderWidth, borderBrightness;
 
-  for (; i < len; i++) {
+  for (const side of sides) {
     // 先判断下是否有边框
-    borderWidth = getStyle(this, borderWidthAttrString.replace("%s", sides[i]));
+    borderWidth = getStyle(node, borderWidthAttrString.replace("%s", side));
     if (!borderWidth) continue;
 
     // 然后判断是否需要替换颜色
-    borderColorAttr = borderColorAttrString.replace("%s", sides[i]);
-    borderBrightness = this.calcBrightness(borderColorAttr);
+    borderColorAttr = borderColorAttrString.replace("%s", side);
+    borderBrightness = getNodeStyleBrightness(node, borderColorAttr);
     if (!borderBrightness) continue;
 
     if (borderBrightness > OPTIONS.basic.borderColorBrightnessThreshold) {
-      setStyle(this, borderColorAttr, OPTIONS.basic.replaceBorderWithColor);
+      setStyle(node, borderColorAttr, OPTIONS.basic.replaceBorderWithColor);
     }
   }
 
   // box-shadow，如果有位移和扩散都为0的box-shadow，我们就认为这个box-shadow是border
-  var shadow = getStyle(this, "box-shadow");
-  var m = /(rgb\(\d+, \d+, \d+\)) 0px 0px 0px (\d+)px/.exec(shadow);
-  if (m && _calcBrightness(m[1])) {
-    setStyle(this, "box-shadow", `${OPTIONS.basic.replaceBorderWithColor} 0px 0px 0px ${m[2]}px`);
+  const shadow = getStyle(node, "box-shadow");
+  const m = /(rgb\(\d+, \d+, \d+\)) 0px 0px 0px (\d+)px/.exec(shadow);
+  if (m && calcBrightness(m[1])) {
+    setStyle(node, "box-shadow", `${OPTIONS.basic.replaceBorderWithColor} 0px 0px 0px ${m[2]}px`);
   }
 };
 
@@ -157,19 +142,18 @@ Element.prototype.replaceBorderColor = function () {
  * 修改文字颜色
  *
  */
-Element.prototype.replaceTextColor = function () {
+const replaceTextColor = (node) => {
   if (!OPTIONS.basic.replaceTextColor) return false;
 
   // 文字亮度
-  var brightness = this.calcBrightness("color"),
-    color;
+  const brightness = getNodeStyleBrightness(node, "color");
   if (!brightness) return false;
 
   // 确认此元素亮度过高且没有背景图片
-  var bgImage = getStyle(this, "background-image");
+  const bgImage = getStyle(node, "background-image");
   if (brightness > OPTIONS.basic.borderColorBrightnessThreshold && (!bgImage || bgImage == "none")) {
     // 替换文字颜色
-    setStyle(this, "color", "#000");
+    setStyle(node, "color", "#000");
   }
 
   // TODO: 有时候虽然当前元素没有背景图片，但其实文字浮动在父元素或其他元素的背景图片上，造成文字看不清
@@ -181,13 +165,14 @@ Element.prototype.replaceTextColor = function () {
  *
  */
 const replaceColor = (node, processOther = false) => {
+  // nodeType != 1 表示这不是一个正常的element: https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
   // 包含highlight/player等特征的节点应当直接跳过，其子节点也不必再遍历
-  if (node.shouldBeIgnored()) {
+  if (node.nodeType !== 1 || shouldBeIgnored(node)) {
     return;
   }
 
   // 替换背景色
-  var bgColorReplacReturn = replaceBackgroundColor(node);
+  const bgColorReplacReturn = replaceBackgroundColor(node);
   // 根据是否替换了背景色决定是否要处理边框、文字颜色等
   // 当返回值为2、3时说明当前节点是有背景色的，应当根据当前节点的情况修改processOther
   // 其他情况继续沿用父节点传下来的值
@@ -199,20 +184,14 @@ const replaceColor = (node, processOther = false) => {
 
   if (processOther) {
     // 替换边框色
-    node.replaceBorderColor();
+    replaceBorderColor(node);
     // 替换文本颜色
-    node.replaceTextColor();
+    replaceTextColor(node);
   }
 
   // 递归
-  var children = node.childNodes,
-    i = 0,
-    len = children.length;
-  for (; i < len; i++) {
-    if (children[i].nodeType == 1) {
-      replaceColor(children[i], processOther);
-    }
-  }
+  node.childNodes.forEach((child) => replaceColor(child, processOther));
+
   benchmark.tick();
 };
 
@@ -220,29 +199,16 @@ const replaceColor = (node, processOther = false) => {
  * 回复页面原始样式
  *
  */
-function restoreColor() {
-  var nodes = $$(".eye-protector-processed"),
-    node,
-    originalStyle,
-    key,
-    i = 0,
-    len = nodes.length;
-  for (; i < len; i++) {
-    node = nodes[i];
-    originalStyle = STYLES.get(node);
-    if (!originalStyle) continue;
-
-    for (key in originalStyle) {
-      if (key == "transition") {
-        setTimeout(function () {
-          node.style.transition = originalStyle.transition;
-        }, 300);
-      } else {
-        node.style[key] = originalStyle[key];
-      }
+const restoreColor = () => {
+  const modifiedNodes = CACHED_STYLES.keys();
+  for (const node of modifiedNodes) {
+    // 感觉这里会存在内存泄漏，一个dom如果已经被页面逻辑移除了，但是却被eye-protector缓存下来了那是不是就永远不会被释放了？
+    const cahcedStyles = CACHED_STYLES.get(node);
+    for (const key in cahcedStyles) {
+      setStyle(node, key, cahcedStyles[key]);
     }
   }
-}
+};
 
 // 用mutationObserver代替监听DOMSubtreeModified事件，后者有性能缺陷：
 // https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
@@ -255,7 +221,7 @@ var observer = new MutationObserver(function (mutations) {
       var ancestor = node,
         shouldIgnore = false;
       while ((ancestor = ancestor.parentNode) && ancestor.nodeName != "BODY") {
-        if (ancestor.shouldBeIgnored()) {
+        if (shouldBeIgnored(ancestor)) {
           shouldIgnore = true;
           break;
         }
@@ -280,11 +246,11 @@ function init() {
       return false;
     }
     // always set background to <html> element
-    setStyle(document.querySelector("html"), "backgroundColor", OPTIONS.basic.replaceBgWithColor);
+    setStyle(document.documentElement, "backgroundColor", OPTIONS.basic.replaceBgWithColor);
     // body需要特殊处理，当body的background-color为transparent时实际上页面是白色
     // 此时也需要给body设置背景色
     const body = document.body,
-      brightness = body.calcBrightness("background-color");
+      brightness = getNodeStyleBrightness(body, "background-color");
     if (!brightness || brightness > OPTIONS.basic.bgColorBrightnessThreshold) {
       setStyle(body, "background-color", OPTIONS.basic.replaceBgWithColor);
       setStyle(body, "transition", "background-color .3s ease");
@@ -297,9 +263,9 @@ function init() {
 }
 
 // benchmark
-var benchmark = new Benchmark();
+const benchmark = new Benchmark();
 // 保存域名
-var host = getHost(document.location.href);
+const host = getHost(document.location.href);
 // 设置改变时重新读取设置
 chrome.storage.onChanged.addListener(init);
 // GO

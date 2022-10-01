@@ -1,44 +1,46 @@
 var OPTIONS = {
   basic: {
     // 工作模式
-    mode: 'positive',
+    mode: "positive",
     // 背景色
-    replaceBgWithColor: '#C1E6C6',
+    replaceBgWithColor: "#C1E6C6",
     // 豆沙绿
-    defaultBgColor: '#C1E6C6',
+    defaultBgColor: "#C1E6C6",
     // 替换背景色的亮度阈值
-    bgColorBrightnessThreshold: .9,
+    bgColorBrightnessThreshold: 0.9,
     // 边框色
-    replaceBorderWithColor: 'rgba(0, 0, 0, .35)',
+    replaceBorderWithColor: "rgba(0, 0, 0, .35)",
     // 替换边框色的亮度阈值
-    borderColorBrightnessThreshold: .5,
+    borderColorBrightnessThreshold: 0.5,
     // 是否替换文字颜色
     replaceTextColor: true,
     // 是否替换文本输入框背景色
-    replaceTextInput: false
+    replaceTextInput: false,
   },
   // 忽略的特殊class
-  ignoreClass: ['highlight', 'syntax', 'code', 'player'],
+  ignoreClass: ["highlight", "syntax", "code", "player"],
+  // 忽略的特殊nodeType
+  skipNodeTypes: ["SCRIPT", "BR", "CANVAS", "IMG", "svg", "CODE"],
   // 主动模式 - 忽略的网站列表
   positiveList: [],
   // 被动模式 - 要替换的域名列表
-  passiveList: []
-}
+  passiveList: [],
+};
 
 // 检查对象是否为空
 function is_object_empty(obj) {
-  for(var key in obj) {
+  for (var key in obj) {
     return false;
   }
   return true;
 }
 
 // array.remove
-Array.prototype.remove = function(key) {
+Array.prototype.remove = function (key) {
   var index = this.indexOf(key);
-  if( index > -1 ) this.splice(index, 1);
+  if (index > -1) this.splice(index, 1);
   return this;
-}
+};
 
 // shortcut
 function $(id) {
@@ -51,24 +53,30 @@ function $$(selector) {
 var storage = chrome.storage.sync;
 
 function readOption(callback) {
-  storage.get('option', function(obj) {
-    if( obj.option && obj.option.basic ) {
-      OPTIONS = obj['option'];
+  storage.get("option", function (obj) {
+    if (obj.option && obj.option.basic) {
+      OPTIONS = obj["option"];
     }
-    callback && typeof callback == 'function' && callback();
+    // add ignoreNodeTypes to defaultOption
+    if (!OPTIONS.skipNodeTypes) {
+      OPTIONS.skipNodeTypes = ["SCRIPT", "BR", "CANVAS", "IMG", "svg", "CODE"];
+      saveOption();
+    }
+    //
+    callback && typeof callback == "function" && callback();
   });
 }
 
 function saveOption(callback) {
-  storage.set({'option': OPTIONS}, callback);
+  storage.set({ option: OPTIONS }, callback);
 }
 
 // 获取当前激活标签页域名
 function getHost(url) {
   var host = /https?:\/\/([^/]+)\//.exec(url);
-  if( host && host.length > 1 ) {
+  if (host && host.length > 1) {
     host = host[1];
-    if( host.startsWith('www.') ) {
+    if (host.startsWith("www.")) {
       return host.slice(4);
     } else {
       return host;
@@ -84,13 +92,13 @@ function _(msg) {
 }
 function i18n() {
   // render texts
-  var nodes = $$('[data-text]');
-  nodes.forEach(function(node) {
+  var nodes = $$("[data-text]");
+  nodes.forEach(function (node) {
     node.innerHTML = _(node.dataset.text);
   });
 
   // add language to body
-  document.body.setAttribute('lang', chrome.i18n.getUILanguage());
+  document.body.setAttribute("lang", chrome.i18n.getUILanguage());
 }
 
 // benchmark
@@ -104,7 +112,7 @@ class Benchmark {
     this.end = new Date();
     clearTimeout(this.ticker);
     this.ticker = setTimeout(() => {
-      const elapsed = (this.end - this.start)/1000;
+      const elapsed = (this.end - this.start) / 1000;
       console.log(`[Eyeprotector] Runs for ${elapsed.toFixed(2)}s`);
       // 只记录初始化那波就够了
       this.tick = () => {};
