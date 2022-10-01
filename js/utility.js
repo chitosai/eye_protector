@@ -55,13 +55,6 @@ function readOption(callback) {
     if( obj.option && obj.option.basic ) {
       OPTIONS = obj['option'];
     }
-    // 惊了，没考虑到会修改默认配置的问题。。
-    // 先这么凑活一下吧
-    if( !OPTIONS.ignoreClass.includes('player') ) {
-      OPTIONS.ignoreClass.push('player');
-      saveOption();
-    }
-    // 
     callback && typeof callback == 'function' && callback();
   });
 }
