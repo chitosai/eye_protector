@@ -67,34 +67,33 @@ function onRangeChange(e) {
   saveOption();
 }
 
-function init() {
+async function init() {
   // i18n
   i18n();
 
   // 读取设置
-  readOption(function () {
-    var options = OPTIONS.basic,
-      key,
-      node;
-    for (key in options) {
-      if (options[key] === true) {
-        node = $(key);
-        if (node) {
-          node.classList.add("checked");
-        }
+  await readOption();
+  var options = OPTIONS.basic,
+    key,
+    node;
+  for (key in options) {
+    if (options[key] === true) {
+      node = $(key);
+      if (node) {
+        node.classList.add("checked");
       }
     }
+  }
 
-    // 工作模式暂时没想到怎么做通用，就做个特例吧
-    $(OPTIONS.basic.mode).classList.add("checked");
+  // 工作模式暂时没想到怎么做通用，就做个特例吧
+  $(OPTIONS.basic.mode).classList.add("checked");
 
-    // 背景色
-    $("color-preview").style.backgroundColor = OPTIONS.basic.replaceBgWithColor;
-    $("color").value = OPTIONS.basic.replaceBgWithColor.slice(1);
+  // 背景色
+  $("color-preview").style.backgroundColor = OPTIONS.basic.replaceBgWithColor;
+  $("color").value = OPTIONS.basic.replaceBgWithColor.slice(1);
 
-    // 亮度阈值
-    $("brightness").value = OPTIONS.basic.bgColorBrightnessThreshold;
-  });
+  // 亮度阈值
+  $("brightness").value = OPTIONS.basic.bgColorBrightnessThreshold;
 
   // 修改设置
   var nodes = $$(".item");
