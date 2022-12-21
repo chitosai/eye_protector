@@ -5,7 +5,7 @@ var CACHED_STYLES = new Map();
  *
  */
 const getStyle = (node, key) => {
-  return window.getComputedStyle(node, null)[key];
+  return window.getComputedStyle(node)[key];
 };
 // 设置元素样式，同时缓存它原有的样式
 const setStyle = (node, key, val) => {
@@ -238,20 +238,23 @@ var observerConfig = {
   subtree: true,
 };
 
-function init() {
-  readOption(function () {
-    if ((OPTIONS.basic.mode == "positive" && OPTIONS.positiveList.includes(host)) || (OPTIONS.basic.mode == "passive" && !OPTIONS.passiveList.includes(host))) {
-      restoreColor();
-      observer.disconnect();
-      return false;
-    }
+async function init() {
+  await readOption();
+  if ((OPTIONS.basic.mode == "positive" && OPTIONS.positiveList.includes(host)) || (OPTIONS.basic.mode == "passive" && !OPTIONS.passiveList.includes(host))) {
+    restoreColor();
+    observer.disconnect();
+    return false;
+  }
+  // 1. 当系统不处在深色模式时，一切逻辑正常执行
+  if (!isNightMode) {
     // always set background to <html> element
     setStyle(document.documentElement, "backgroundColor", OPTIONS.basic.replaceBgWithColor);
     // body需要特殊处理，当body的background-color为transparent时实际上页面是白色
     // 此时也需要给body设置背景色
     const body = document.body,
       brightness = getNodeStyleBrightness(body, "background-color");
-    if (!brightness || brightness > OPTIONS.basic.bgColorBrightnessThreshold) {
+    // 全黑时brightness = 0，一定要排除出去
+    if ((!brightness && brightness !== 0) || brightness > OPTIONS.basic.bgColorBrightnessThreshold) {
       setStyle(body, "background-color", OPTIONS.basic.replaceBgWithColor);
       setStyle(body, "transition", "background-color .3s ease");
     }
@@ -259,7 +262,23 @@ function init() {
     Array.from(body.children).forEach(replaceColor);
     // watch dom changes
     observer.observe(body, observerConfig);
-  });
+  } else {
+    // 2. 当系统处于深色模式，且html or body的背景色足够深时，我就简单粗暴的认为这个网站是有深色样式的，跳过一切逻辑让网页原样显示
+    // 有的网站会把深色样式加在html上有的会在body上，也可能会加在别的地方吧，但我们就只处理两种最常见的情况，其他的就随缘吧
+    const html = document.querySelector("html"),
+      htmlBrightness = getNodeStyleBrightness(html, "background-color");
+    const body = document.body,
+      bodyBrightness = getNodeStyleBrightness(body, "background-color");
+    if ((htmlBrightness && htmlBrightness < OPTIONS.basic.bgColorBrightnessThreshold) || (bodyBrightness && bodyBrightness < OPTIONS.basic.bgColorBrightnessThreshold)) {
+      return false;
+    }
+    setStyle(body, "background-color", OPTIONS.basic.replaceBgWithColor);
+    setStyle(body, "transition", "background-color .3s ease");
+    // 这边稍微有点区别，非深色模式时无论body的背景色深浅代码都会遍历DOM树来检查是否有需要变色的元素
+    // 但是在深色模式下仅Google就会存在误判的情况，所以想了想还是直接全部跳过了，这样可能会有漏网之鱼但是逻辑最简单
+    Array.from(body.children).forEach(replaceColor);
+    observer.observe(body, observerConfig);
+  }
 }
 
 // benchmark
@@ -268,5 +287,7 @@ const benchmark = new Benchmark();
 const host = getHost(document.location.href);
 // 设置改变时重新读取设置
 chrome.storage.onChanged.addListener(init);
+// 检查浏览器是否开启了Night Mode
+const { matches: isNightMode } = window.matchMedia("(prefers-color-scheme: dark)");
 // GO
 init();

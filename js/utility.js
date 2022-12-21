@@ -53,17 +53,19 @@ function $$(selector) {
 var storage = chrome.storage.sync;
 
 function readOption(callback) {
-  storage.get("option", function (obj) {
-    if (obj.option && obj.option.basic) {
-      OPTIONS = obj["option"];
-    }
-    // add ignoreNodeTypes to defaultOption
-    if (!OPTIONS.skipNodeTypes) {
-      OPTIONS.skipNodeTypes = ["SCRIPT", "BR", "CANVAS", "IMG", "svg", "CODE"];
-      saveOption();
-    }
-    //
-    callback && typeof callback == "function" && callback();
+  return new Promise((resolve) => {
+    storage.get("option", function (obj) {
+      if (obj.option && obj.option.basic) {
+        OPTIONS = obj["option"];
+      }
+      // add ignoreNodeTypes to defaultOption
+      if (!OPTIONS.skipNodeTypes) {
+        OPTIONS.skipNodeTypes = ["SCRIPT", "BR", "CANVAS", "IMG", "svg", "CODE"];
+        saveOption();
+      }
+      //
+      resolve();
+    });
   });
 }
 
