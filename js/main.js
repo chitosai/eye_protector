@@ -238,6 +238,12 @@ var observerConfig = {
   subtree: true,
 };
 
+function wait(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 async function init() {
   await readOption();
   if ((OPTIONS.basic.mode == "positive" && OPTIONS.positiveList.includes(host)) || (OPTIONS.basic.mode == "passive" && !OPTIONS.passiveList.includes(host))) {
@@ -265,11 +271,14 @@ async function init() {
   } else {
     // 2. 当系统处于深色模式，且html or body的背景色足够深时，我就简单粗暴的认为这个网站是有深色样式的，跳过一切逻辑让网页原样显示
     // 有的网站会把深色样式加在html上有的会在body上，也可能会加在别的地方吧，但我们就只处理两种最常见的情况，其他的就随缘吧
+    await wait(10); // 网页切换深色模式有时会有一定延迟，我们也稍微等一下
     const html = document.querySelector("html"),
       htmlBrightness = getNodeStyleBrightness(html, "background-color");
     const body = document.body,
       bodyBrightness = getNodeStyleBrightness(body, "background-color");
-    if ((htmlBrightness && htmlBrightness < OPTIONS.basic.bgColorBrightnessThreshold) || (bodyBrightness && bodyBrightness < OPTIONS.basic.bgColorBrightnessThreshold)) {
+    // 亮度 = 0时是纯黑色，不需要改色
+    // 亮度为true且小于阈值时不需要改色
+    if (htmlBrightness === 0 || (htmlBrightness && htmlBrightness < OPTIONS.basic.bgColorBrightnessThreshold) || bodyBrightness === 0 || (bodyBrightness && bodyBrightness < OPTIONS.basic.bgColorBrightnessThreshold)) {
       return false;
     }
     setStyle(body, "background-color", OPTIONS.basic.replaceBgWithColor);

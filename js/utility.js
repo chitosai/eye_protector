@@ -52,7 +52,7 @@ function $$(selector) {
 
 var storage = chrome.storage.sync;
 
-function readOption(callback) {
+function readOption() {
   return new Promise((resolve) => {
     storage.get("option", function (obj) {
       if (obj.option && obj.option.basic) {
