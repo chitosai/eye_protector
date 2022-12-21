@@ -56,10 +56,10 @@ body {
   display: none;
   width: 100%;
 }
-[lang="cn"] .zfb{
+[lang^="zh"] .zfb{
   display: block;
 }
-[lang="en"] .paypal{
+[lang^="en"] .paypal{
   display: block;
 }
 
